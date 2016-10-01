@@ -120,12 +120,9 @@ function _resize(){
 	}else{
 		w = Math.round(h*ratio);
 	}
-	// actually resize
-	//scene.scale.x=scene.scale.y=w/size[0];
-	//renderer.resize(w,h);
+	
 	renderer.view.style.width=w+"px";
 	renderer.view.style.height=h+"px";
-	//renderTexture.baseTexture.resize(w,h);
 
 	console.log("Resized",size,w,h);
 }
