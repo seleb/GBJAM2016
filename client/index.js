@@ -72,7 +72,8 @@ $(document).ready(function(){
 	CustomFilter.prototype.constructor = CustomFilter;
 
 	PIXI.loader
-		.add("palette_shader","assets/palette_shader.frag")
+		.add("sprite_shader","assets/sprite_shader.frag")
+		.add("tile_shader","assets/tile_shader.frag")
 		.add("screen_shader","assets/screen_shader.frag")
 		.add("spritesheet","assets/img/textures.json")
 		.add("font","assets/font/font.fnt")
@@ -120,7 +121,7 @@ function _resize(){
 	}else{
 		w = Math.round(h*ratio);
 	}
-	
+
 	renderer.view.style.width=w+"px";
 	renderer.view.style.height=h+"px";
 

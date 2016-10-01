@@ -14,30 +14,44 @@ function main(){
 }
 
 function init(){
+	gamepads.init();
+	keys.init();
+
 	scene = new PIXI.Container;
 	game.addChild(scene);
 
-	palette_filter = new CustomFilter(PIXI.loader.resources.palette_shader.data);
+	sprite_filter = new CustomFilter(PIXI.loader.resources.sprite_shader.data);
+	tile_filter = new CustomFilter(PIXI.loader.resources.tile_shader.data);
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
 
-	palette_filter.padding=1;
+	sprite_filter.uniforms.uPaletteSampler = PIXI.loader.resources.palette.texture;
+	sprite_filter.uniforms.uPalette = 0;
+	tile_filter.uniforms.uPaletteSampler = PIXI.loader.resources.palette.texture;
+	tile_filter.uniforms.uPalette = 0;
+
+	sprite_filter.padding=1;
 	screen_filter.padding=0;
+	tile_filter.padding=0;
 
 	renderSprite.filters = [screen_filter];
 
 
 	sprite_skele=new PIXI.Sprite(PIXI.Texture.fromFrame("skele.png"));
-	sprite_skele.filters = [palette_filter];
+	sprite_skele.filters = [sprite_filter];
 	scene.addChild(sprite_skele);
 
 
 	sprite_face=new PIXI.Sprite(PIXI.Texture.fromFrame("face.png"));
-	sprite_face.filters = [palette_filter];
+	sprite_face.filters = [sprite_filter];
 	scene.addChild(sprite_face);
 
 
-	palette_filter.uniforms.uPaletteSampler = PIXI.loader.resources.palette.texture;
-	palette_filter.uniforms.uPalette = 0;
+	sprite_menu=new PIXI.Sprite(PIXI.Texture.fromFrame("menu.png"));
+	sprite_menu.filters = [tile_filter];
+	sprite_menu.position.x=0;
+	sprite_menu.position.y=size[1]-32;
+	scene.addChild(sprite_menu);
+
 
 
 	menu={};
@@ -46,45 +60,43 @@ function init(){
 	fontStyle={font: "8px font", align: "left"};
 
 	var attackTxt = new PIXI.extras.BitmapText(" Attack ", fontStyle);
- 	attackTxt.filters=[palette_filter];
-	attackTxt.position.x = 8;
-	attackTxt.position.y = size[1]-32;
+ 	attackTxt.filters=[tile_filter];
+	attackTxt.position.x = 4;
+	attackTxt.position.y = size[1]-24-4;
 	attackTxt.maxLineHeight=1;
 	attackTxt.maxWidth=size[0];
-	attackTxt.tint=0xCCCCCC;
+	attackTxt.tint=0x333333;
 
 	var specialTxt = new PIXI.extras.BitmapText("Special", fontStyle);
- 	specialTxt.filters=[palette_filter];
-	specialTxt.position.x = 8;
-	specialTxt.position.y = size[1]-24;
+ 	specialTxt.filters=[tile_filter];
+	specialTxt.position.x = 4;
+	specialTxt.position.y = size[1]-16-4;
 	specialTxt.maxLineHeight=1;
 	specialTxt.maxWidth=size[0];
 	specialTxt.tint=0xCCCCCC;
 
 	var runTxt = new PIXI.extras.BitmapText("Run", fontStyle);
- 	runTxt.filters=[palette_filter];
-	runTxt.position.x = 8;
-	runTxt.position.y = size[1]-16;
+ 	runTxt.filters=[tile_filter];
+	runTxt.position.x = 4;
+	runTxt.position.y = size[1]-8-4;
 	runTxt.maxLineHeight=1;
 	runTxt.maxWidth=size[0];
 	runTxt.tint=0xCCCCCC;
 
 	menu.selectionText = new PIXI.extras.BitmapText("[          ]", fontStyle);
- 	menu.selectionText.filters=[palette_filter];
-	menu.selectionText.position.x = 8;
-	menu.selectionText.position.y = size[1]-32;
+ 	menu.selectionText.filters=[tile_filter];
+	menu.selectionText.position.x = 4;
+	menu.selectionText.position.y = size[1]-24-4;
 	menu.selectionText.maxLineHeight=1;
 	menu.selectionText.maxWidth=size[0];
 	menu.selectionText.tint=0x333333;
 
 	menu.selectionBg = new PIXI.Graphics();
-	menu.selectionBg.position.x = 8;
-	menu.selectionBg.position.y = size[1]-32;
+	menu.selectionBg.position.x = 4;
+	menu.selectionBg.position.y = size[1]-24-4;
 	menu.selectionBg.beginFill(0xCCCCCC);
 	menu.selectionBg.drawRect(1,1,35,5);
-	menu.selectionBg.beginFill(0x333333);
-	menu.selectionBg.drawRect(1,1,1,1);
-	menu.selectionBg.filters=[palette_filter];
+	menu.selectionBg.filters=[tile_filter];
 	menu.selectionBg.endFill();
 
 
@@ -106,8 +118,8 @@ function init(){
 		}
 		menu.options[menu.selected].text=" "+menu.options[menu.selected].text+" ";
 		menu.options[menu.selected].tint=0x333333;
-		menu.selectionBg.position.y = size[1]-32+8*menu.selected;
-		menu.selectionText.position.y = size[1]-32+8*menu.selected;
+		menu.selectionBg.position.y = size[1]-24+8*menu.selected-4;
+		menu.selectionText.position.y = size[1]-24+8*menu.selected-4;
 	};
 	menu.next=function(){
 		menu.nav(1);
@@ -126,16 +138,39 @@ function init(){
 	window.onresize = onResize;
 	_resize();
 	main();
-
-	$(document).on("keydown",function(){
-		menu.next();
-	});
 }
 
-
+var navved=false;
 function update(){
+	var dir=[0,0];
+
+	var dpad=gamepads.getDpad();
+	dir[0]+=dpad[0];
+	dir[1]+=dpad[1];
+
+	if(keys.isJustDown(keys.UP) || keys.isJustDown(keys.W)){
+		dir[1]-=1;
+	}if(keys.isJustDown(keys.DOWN) || keys.isJustDown(keys.S)){
+		dir[1]+=1;
+	}
+
+	if(dir[1] > 0){
+		if(!navved){
+			menu.next();
+			navved=true;
+		}
+	}else if(dir[1] < 0){
+		if(!navved){
+			menu.prev();
+			navved=true;
+		}
+	}else{
+		navved=false;
+	}
+
 	// cycle palettes
-	palette_filter.uniforms.uPalette = (Math.floor(curTime/1000)%5)/5;
+	sprite_filter.uniforms.uPalette = 
+	tile_filter.uniforms.uPalette = (Math.floor(curTime/1000)%5)/5;
 
 
 	// TODO
@@ -143,6 +178,10 @@ function update(){
 	sprite_face.position.y=Math.cos(curTime/2000.0)*50+50;
 	sprite_skele.position.y=Math.sin(curTime/2300.0)*10+20;
 	sprite_skele.position.x=Math.cos(curTime/2300.0)*10+20;
+
+
+	gamepads.update();
+	keys.update();
 }
 
 function render(){

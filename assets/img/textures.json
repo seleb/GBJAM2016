@@ -8,9 +8,17 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
 	"sourceSize": {"w":8,"h":8}
 },
+"menu.png":
+{
+	"frame": {"x":9,"y":0,"w":160,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32},
+	"sourceSize": {"w":160,"h":32}
+},
 "palette.png":
 {
-	"frame": {"x":9,"y":0,"w":5,"h":5},
+	"frame": {"x":170,"y":0,"w":5,"h":5},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":5,"h":5},
@@ -18,7 +26,7 @@
 },
 "skele.png":
 {
-	"frame": {"x":0,"y":9,"w":16,"h":16},
+	"frame": {"x":176,"y":0,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -29,8 +37,8 @@
 	"version": "1.0",
 	"image": "textures.png",
 	"format": "RGBA8888",
-	"size": {"w":16,"h":25},
+	"size": {"w":192,"h":32},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:1dc94a7306cbe84d19891c36f67aafc3:823eee438df1929aba05473df479b9d2:cf827d152df04949dfee256cd0c8efd8$"
+	"smartupdate": "$TexturePacker:SmartUpdate:55dc912a95a691cd92e601b51e720833:02631768d7a0effd4a655a7aa9d2658b:cf827d152df04949dfee256cd0c8efd8$"
 }
 }
