@@ -1,4 +1,7 @@
 function lerp(from,to,t){
+	if(Math.abs(to-from) < 1){
+		return to;
+	}
 	return from+(to-from)*t;
 }
 
