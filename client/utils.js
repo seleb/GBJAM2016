@@ -50,3 +50,11 @@ function range(rng,range){
 function nextPowerOfTwo(v){
 	return Math.pow(2, Math.ceil(Math.log(v)/Math.log(2)));
 }
+
+function getFrames(_texture, _frames){
+	var res=[];
+	for(var i = 1; i <= _frames; ++i){
+		res.push(PIXI.Texture.fromFrame(_texture+"_"+i+".png"));
+	}
+	return res;
+}

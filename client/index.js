@@ -72,10 +72,9 @@ $(document).ready(function(){
 	CustomFilter.prototype.constructor = CustomFilter;
 
 	PIXI.loader
-		.add("sprite_shader","assets/sprite_shader.frag")
-		.add("tile_shader","assets/tile_shader.frag")
 		.add("screen_shader","assets/screen_shader.frag")
-		.add("spritesheet","assets/img/textures.json")
+		.add("spritesheet","assets/textures.json")
+		.add("tilemap","assets/img/tilemap.json")
 		.add("font","assets/font/font.fnt")
 		.add("palette","assets/img/palette.png");
 

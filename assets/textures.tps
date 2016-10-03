@@ -6,7 +6,7 @@
         <key>texturePackerVersion</key>
         <string>4.2.2</string>
         <key>fileName</key>
-        <string>A:/Work/GBJAM2016/textures.tps</string>
+        <string>A:/Work/GBJAM2016/assets/textures.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -36,7 +36,7 @@
         <key>dataFormat</key>
         <string>pixijs</string>
         <key>textureFileName</key>
-        <filename></filename>
+        <filename>textures.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -70,7 +70,7 @@
             </struct>
         </struct>
         <key>shapePadding</key>
-        <uint>1</uint>
+        <uint>0</uint>
         <key>jpgQuality</key>
         <uint>80</uint>
         <key>pngOptimizationLevel</key>
@@ -106,7 +106,7 @@
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">AnySize</enum>
             <key>forceSquared</key>
-            <false/>
+            <true/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -141,7 +141,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>assets/img/textures.json</filename>
+                <filename>img/textures.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -151,7 +151,7 @@
         <key>outputFormat</key>
         <enum type="SettingsBase::OutputFormat">RGBA8888</enum>
         <key>alphaHandling</key>
-        <enum type="SettingsBase::AlphaHandling">ClearTransparentPixels</enum>
+        <enum type="SettingsBase::AlphaHandling">KeepTransparentPixels</enum>
         <key>contentProtection</key>
         <struct type="ContentProtection">
             <key>key</key>
@@ -174,7 +174,7 @@
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
-            <uint>1</uint>
+            <uint>0</uint>
             <key>trimMode</key>
             <enum type="SpriteSettings::TrimMode">None</enum>
             <key>tracerTolerance</key>
@@ -188,9 +188,24 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">assets/img/face.png</key>
-            <key type="filename">assets/img/palette.png</key>
-            <key type="filename">assets/img/skele.png</key>
+            <key type="filename">img/menu.png</key>
+            <key type="filename">img/palette.png</key>
+            <key type="filename">img/screen.png</key>
+            <key type="filename">img/soldier_idle_1.png</key>
+            <key type="filename">img/soldier_idle_2.png</key>
+            <key type="filename">img/soldier_idle_3.png</key>
+            <key type="filename">img/soldier_idle_4.png</key>
+            <key type="filename">img/tile_0.png</key>
+            <key type="filename">img/tile_1.png</key>
+            <key type="filename">img/tile_blank.png</key>
+            <key type="filename">img/tile_menu_b.png</key>
+            <key type="filename">img/tile_menu_bl.png</key>
+            <key type="filename">img/tile_menu_br.png</key>
+            <key type="filename">img/tile_menu_l.png</key>
+            <key type="filename">img/tile_menu_r.png</key>
+            <key type="filename">img/tile_menu_t.png</key>
+            <key type="filename">img/tile_menu_ul.png</key>
+            <key type="filename">img/tile_menu_ur.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -198,9 +213,24 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>assets/img/face.png</filename>
-            <filename>assets/img/palette.png</filename>
-            <filename>assets/img/skele.png</filename>
+            <filename>img/palette.png</filename>
+            <filename>img/menu.png</filename>
+            <filename>img/screen.png</filename>
+            <filename>img/soldier_idle_1.png</filename>
+            <filename>img/soldier_idle_2.png</filename>
+            <filename>img/soldier_idle_3.png</filename>
+            <filename>img/soldier_idle_4.png</filename>
+            <filename>img/tile_0.png</filename>
+            <filename>img/tile_1.png</filename>
+            <filename>img/tile_blank.png</filename>
+            <filename>img/tile_menu_b.png</filename>
+            <filename>img/tile_menu_bl.png</filename>
+            <filename>img/tile_menu_br.png</filename>
+            <filename>img/tile_menu_l.png</filename>
+            <filename>img/tile_menu_r.png</filename>
+            <filename>img/tile_menu_t.png</filename>
+            <filename>img/tile_menu_ul.png</filename>
+            <filename>img/tile_menu_ur.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
