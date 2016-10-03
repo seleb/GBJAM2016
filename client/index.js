@@ -35,7 +35,26 @@ $(document).ready(function(){
 	});
 	sounds["bgm"].fadeIn(0.2,1000);*/
 
-	Howler.mute();
+	sounds["sfx_select"] = new Howl({
+		urls:["assets/audio/sfx_2.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+	sounds["sfx_cancel"] = new Howl({
+		urls:["assets/audio/sfx_1.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+	sounds["sfx_move"] = new Howl({
+		urls:["assets/audio/sfx_0.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+
+	//Howler.mute();
 
 	// create renderer
 	renderer = PIXI.autoDetectRenderer(
