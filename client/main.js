@@ -367,14 +367,13 @@ function init(){
 			cancel:function(){
 				if(turn.taken.length > 0){
 					// undo the previous turn commit
-					var t=turn.taken.pop();
-					menu.states.set("select_target");
-
-					// replicate the previous turn right before commit
+					// and replicate the previous turn right before commit
 					// (selected party member, action, and target)
-					menu.nav(t.target);
+					var t=turn.taken.pop();
 					menu.source=t.source;
 					menu.action=t.action;
+					menu.states.set("select_target");
+					menu.nav(t.target);
 				}else{
 					// this is the base state, can't go back any further
 				}
@@ -430,7 +429,7 @@ function init(){
 				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.position.y-32;
 			},
 			nav:function(){
-				menu.descriptionTxt.text=menu.target_party[menu.selected].stats.toString();
+				menu.descriptionTxt.text = player_party[menu.source].name+" :\n"+player_party[menu.source].actions[menu.action].name + " " + menu.target_party[menu.selected].name;
 			},
 			select:function(){
 				// commit the turn
