@@ -27,13 +27,12 @@ $(document).ready(function(){
 
 	// setup game
 	startTime=Date.now();
-	/*sounds["bgm"] = new Howl({
-		urls:["assets/audio/bgm.ogg"],
+	sounds["bgm"] = new Howl({
+		urls:["assets/audio/moody music.wav"],
 		autoplay:true,
 		loop:true,
 		volume:0
 	});
-	sounds["bgm"].fadeIn(0.2,1000);*/
 
 	sounds["sfx_select"] = new Howl({
 		urls:["assets/audio/sfx_2.wav"],
@@ -53,6 +52,8 @@ $(document).ready(function(){
 		loop:false,
 		volume:1
 	});
+
+	sounds["bgm"].fadeIn(1,1000);
 
 	//Howler.mute();
 
@@ -86,6 +87,7 @@ $(document).ready(function(){
 	renderSprite = new PIXI.Sprite(renderTexture, new PIXI.Rectangle(0,0,size[0],size[1]));
 	game.addChild(renderSprite);
 	
+	fontStyle={font: "8px font", align: "left"};
 
 	CustomFilter.prototype = Object.create(PIXI.Filter.prototype);
 	CustomFilter.prototype.constructor = CustomFilter;

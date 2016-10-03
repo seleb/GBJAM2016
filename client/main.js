@@ -17,6 +17,113 @@ function init(){
 	gamepads.init();
 	keys.init();
 
+
+
+	var action_attack={
+		name:"attack",
+		description:"attack an enemy for physical damage",
+		friendly:false,
+		trigger:function(source,target){
+			console.log(source.name+" attacked "+target.name);
+		}
+	};
+	var action_defend={
+		name:"defend",
+		description:"put up defenses to reduce incoming damage",
+		friendly:true,
+		trigger:function(source,target){
+			console.log(source.name+" defended "+target.name);
+		}
+	};
+
+	player_party=[
+		{
+			name:"buddy 1",
+			sprite:null,
+			stats:{
+				str:5,
+				int:5,
+				def:5
+			},
+			actions:[
+				action_attack,
+				action_defend,
+				{
+					name:"special1",
+					description:"this is my special move",
+					friendly:false,
+					trigger:function(){
+						console.log(source.name+" defended "+target.name);
+					}
+				}
+			]
+		},
+		{
+			name:"buddy 2",
+			sprite:null,
+			stats:{
+				str:5,
+				int:5,
+				def:5
+			},
+			actions:[
+				action_attack,
+				action_defend,
+				{
+					name:"special2",
+					description:"i also get a special move",
+					friendly:false,
+					trigger:function(){
+						console.log(source.name+" defended "+target.name);
+					}
+				}
+			]
+		},
+		{
+			name:"buddy 3",
+			sprite:null,
+			stats:{
+				str:5,
+				int:5,
+				def:5
+			},
+			actions:[
+				action_attack,
+				action_defend
+			]
+		}
+	];
+	enemy_party=[
+		{
+			name:"blob1",
+			sprite:null,
+			stats:{
+				str:5,
+				int:5,
+				def:5
+			}
+		},
+		{
+			name:"blob2",
+			sprite:null,
+			stats:{
+				str:5,
+				int:5,
+				def:5
+			}
+		},
+		{
+			name:"blob3",
+			sprite:null,
+			stats:{
+				str:5,
+				int:5,
+				def:5
+			}
+		}
+	];
+
+
 	scene = new PIXI.Container;
 	game.addChild(scene);
 
@@ -33,8 +140,8 @@ function init(){
 
 	// screen background
 	bg = new PIXI.Container();
+	addLerp(bg,0.1);
 	bg.cacheAsBitmap=true;
-	bg.tx=0;
 	scene.addChild(bg);
 
 	var tiles=PIXI.loader.resources.tilemap.data;
@@ -71,64 +178,84 @@ function init(){
 	}
 
 
-	sprite_skele=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
-	sprite_skele.play();
-	sprite_skele.animationSpeed=1/20;
-	sprite_skele.position.x=100;
-	sprite_skele.position.y=64;
-	scene.addChild(sprite_skele);
-
-
-
-
-	sprite_soldier=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
-	sprite_soldier.play();
-	sprite_soldier.animationSpeed=1/10;
-	sprite_soldier.position.x=32;
-	sprite_soldier.position.y=64-9;
-	scene.addChild(sprite_soldier);
-
-	sprite_soldier=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
-	sprite_soldier.gotoAndPlay(2);
-	sprite_soldier.animationSpeed=1/10;
-	sprite_soldier.position.x=16;
-	sprite_soldier.position.y=64+8-9;
-	scene.addChild(sprite_soldier);
-
-	sprite_soldier=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
-	sprite_soldier.play();
-	sprite_soldier.animationSpeed=1/10;
-	sprite_soldier.position.x=0;
-	sprite_soldier.position.y=64+16-9;
-	scene.addChild(sprite_soldier);
-
-
-
-	//menu={};
-	menu.options=[];
-
-	fontStyle={font: "8px font", align: "left"};
-
-	var attackTxt = new PIXI.extras.BitmapText(" Attack ", fontStyle);
-	var defendTxt = new PIXI.extras.BitmapText("Defend", fontStyle);
-	var specialTxt = new PIXI.extras.BitmapText("Special", fontStyle);
-	attackTxt.description="Attack an enemy for physical damage";
-	defendTxt.description="Put up defenses to reduce incoming damage";
-	specialTxt.description="Do a thing that does a thing!";
-	attackTxt.select=function(){
-		bg.tx=160;
+	{
+		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
+		spr.position.x=96;
+		spr.position.y=63-8;
+		addLerp(spr,0.25);
+		spr.gotoAndPlay(0);
+		spr.animationSpeed=1/20;
+		scene.addChild(spr);
+		enemy_party[0].spr=spr;
 	}
-	defendTxt.select=function(){
-		bg.tx=0;
+	{
+		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
+		spr.position.x=112;
+		spr.position.y=63;
+		addLerp(spr,0.25);
+		spr.gotoAndPlay(1);
+		spr.animationSpeed=1/20;
+		scene.addChild(spr);
+		enemy_party[1].spr=spr;
 	}
-	specialTxt.select=function(){
-		screen_filter.uniforms.uBrightness -= 1/4;
-		if(screen_filter.uniforms.uBrightness < -1){
-			screen_filter.uniforms.uBrightness+=2;
-		}
+	{
+		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
+		spr.position.x=128;
+		spr.position.y=63+8;
+		addLerp(spr,0.25);
+		spr.gotoAndPlay(0);
+		spr.animationSpeed=1/20;
+		scene.addChild(spr);
+		enemy_party[2].spr=spr;
 	}
 
-	menu.descriptionTxt = new PIXI.extras.BitmapText("do a thing!", fontStyle);
+	{
+		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
+		spr.position.x=32;
+		spr.position.y=63-8;
+		addLerp(spr,0.25);
+		spr.gotoAndPlay(0);
+		spr.animationSpeed=1/10;
+		scene.addChild(spr);
+		player_party[0].spr=spr;
+	}
+	{
+		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
+		spr.position.x=16;
+		spr.position.y=63;
+		addLerp(spr,0.25);
+		spr.gotoAndPlay(2);
+		spr.animationSpeed=1/10;
+		scene.addChild(spr);
+		player_party[1].spr=spr;
+	}
+	{
+		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
+		spr.position.x=0;
+		spr.position.y=63+8;
+		addLerp(spr,0.25);
+		spr.gotoAndPlay(0);
+		spr.animationSpeed=1/10;
+		scene.addChild(spr);
+		player_party[2].spr=spr;
+	}
+
+	sprite_pointer=new PIXI.Container();
+	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
+	sprite_pointer.addChild(sprite_pointer.actualSprite);
+	sprite_pointer.position.x=0;
+	sprite_pointer.position.y=64+16-9-32;
+	addLerp(sprite_pointer,0.5);
+	scene.addChild(sprite_pointer);
+
+	menu.options=[
+		new PIXI.extras.BitmapText("option slot", fontStyle),
+		new PIXI.extras.BitmapText("option slot", fontStyle),
+		new PIXI.extras.BitmapText("option slot", fontStyle),
+		new PIXI.extras.BitmapText("option slot", fontStyle)
+	];
+
+	menu.descriptionTxt = new PIXI.extras.BitmapText("description slot", fontStyle);
 	menu.descriptionTxt.position.x=32+20;
 	menu.descriptionTxt.position.y=4;
 	menu.descriptionTxt.tint=0xCCCCCC;
@@ -147,36 +274,46 @@ function init(){
 	menu.selectionBg.drawRect(1,1,38,5);
 	menu.selectionBg.endFill();
 
-
-
-	menu.options.push(attackTxt);
-	menu.options.push(defendTxt);
-	menu.options.push(specialTxt);
-
 	for(var i=0; i < menu.options.length; ++i){
 		menu.options[i].position=new PIXI.Point(4,4+8*i);
-		menu.options[i].tint=0xCCCCCC;
 		menu.options[i].maxLineHeight=1;
 		menu.options[i].maxWidth=size[0];
+		menu.options[i].disable=function(){
+			this.disabled=true;
+			this.tint=0x666666;
+		};menu.options[i].enable=function(){
+			this.disabled=false;
+			this.tint=0xCCCCCC;
+		};
+
+		menu.options[i].enable();
 	}
 
 	menu.selected=0;
 	menu.nav=function(_by){
 		menu.options[menu.selected].text=menu.options[menu.selected].text.substr(1,menu.options[menu.selected].text.length-2);
-		menu.options[menu.selected].tint=0xCCCCCC;
+		menu.options[menu.selected].tint = menu.options[menu.selected].disabled ? 0x666666 : 0xCCCCCC;
 		menu.selected+=_by;
-		while(menu.selected < 0){
-			menu.selected+=menu.options.length;
-		}
-		while(menu.selected >= menu.options.length){
-			menu.selected-=menu.options.length;
+
+		// wrap-around menu and skip over disabled options
+		while(menu.selected  < 0|| menu.selected >= menu.options.length || menu.options[menu.selected].disabled){
+			if(menu.selected < 0){
+				menu.selected+=menu.options.length;
+			}if(menu.selected >= menu.options.length){
+				menu.selected-=menu.options.length;
+			}if(menu.options[menu.selected].disabled){
+				var s = Math.sign(_by);
+				menu.selected += Math.abs(s) > 0 ? s : 1;
+			}
 		}
 		menu.options[menu.selected].text=" "+menu.options[menu.selected].text+" ";
 		menu.options[menu.selected].tint=0x333333;
 		menu.selectionBg.position.y = 4+8*menu.selected;
 		menu.selectionText.position.y = 4+8*menu.selected;
 
-		menu.descriptionTxt.text=menu.options[menu.selected].description;
+		menu.states[menu.states.current].nav();
+
+		sounds["sfx_move"].play();
 	};
 	menu.next=function(){
 		menu.nav(1);
@@ -184,8 +321,166 @@ function init(){
 	menu.prev=function(){
 		menu.nav(-1);
 	};
+	menu.select=function(){
+		menu.states[menu.states.current].select();
+		sounds["sfx_select"].play();
+	};
+	menu.cancel=function(){
+		menu.states[menu.states.current].cancel();
+		sounds["sfx_cancel"].play();
+	};
+	menu.update=function(){
+		menu.states[menu.states.current].update();
+	}
 
-	menu.nav(0);
+	menu.states={
+		"select_party_member":{
+			init:function(){
+				for(var i = 0; i < menu.options.length; ++i){
+					if(i < player_party.length){
+						menu.options[i].text = player_party[i].name;
+						menu.options[i].enable();
+
+						for(var j = 0; j < turn.taken.length; ++j){
+							if(i == turn.taken[j].source){
+								menu.options[i].disable();
+							}
+						}
+					}else{
+						menu.options[i].text = "";
+						menu.options[i].disable();
+					}
+				}
+			},
+			update:function(){
+				sprite_pointer.lerp.t.x = player_party[menu.selected].spr.position.x;
+				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.position.y-32;
+			},
+			nav:function(){
+				menu.descriptionTxt.text=player_party[menu.selected].stats.toString();
+			},
+			select:function(){
+				menu.source=menu.selected;
+				menu.states.set("select_action");
+				player_party[menu.source].spr.lerp.t.x += 8;
+			},
+			cancel:function(){
+				if(turn.taken.length > 0){
+					// undo the previous turn commit
+					var t=turn.taken.pop();
+					menu.states.set("select_target");
+
+					// replicate the previous turn right before commit
+					// (selected party member, action, and target)
+					menu.nav(t.target);
+					menu.source=t.source;
+					menu.action=t.action;
+				}else{
+					// this is the base state, can't go back any further
+				}
+			}
+		},
+		"select_action":{
+			init:function(){
+				for(var i = 0; i < menu.options.length; ++i){
+					if(i < player_party[menu.source].actions.length){
+						menu.options[i].text = player_party[menu.source].actions[i].name;
+						menu.options[i].enable();
+					}else{
+						menu.options[i].text = "";
+						menu.options[i].disable();
+					}
+				}
+			},
+			update:function(){
+				sprite_pointer.lerp.t.x = player_party[menu.source].spr.position.x;
+				sprite_pointer.lerp.t.y = player_party[menu.source].spr.position.y-32;
+			},
+			nav:function(){
+				menu.descriptionTxt.text = player_party[menu.source].actions[menu.selected].description;
+			},
+			select:function(){
+				menu.action = menu.selected;
+				menu.target_party = player_party[menu.source].actions[menu.action].friendly ? player_party : enemy_party;
+				menu.states.set("select_target");
+
+			},
+			cancel:function(){
+				// go back to party member selection
+				player_party[menu.source].spr.lerp.t.x -= 8;
+				menu.states.set("select_party_member");
+				menu.nav(menu.source);
+				menu.source=null;
+			}
+		},
+		"select_target":{
+			init:function(){
+				for(var i = 0; i < menu.options.length; ++i){
+					if(i < menu.target_party.length){
+						menu.options[i].text = menu.target_party[i].name;
+						menu.options[i].enable();
+					}else{
+						menu.options[i].text = "";
+						menu.options[i].disable();
+					}
+				}
+			},
+			update:function(){
+				sprite_pointer.lerp.t.x = menu.target_party[menu.selected].spr.position.x;
+				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.position.y-32;
+			},
+			nav:function(){
+				menu.descriptionTxt.text=menu.target_party[menu.selected].stats.toString();
+			},
+			select:function(){
+				// commit the turn
+				turn.taken.push({
+					source:menu.source,
+					action:menu.action,
+					target:menu.selected
+				});
+
+				if(turn.taken.length == player_party.length){
+					// TODO if all turns are taken, commit enemy turns and play out action
+					
+					turn.taken=[]; // just resets
+					menu.states.set("select_party_member");
+					menu.source=null;
+					menu.action=null;
+				}else{
+					// start over
+					menu.states.set("select_party_member");
+					menu.source=null;
+					menu.action=null;
+				}
+			},
+			cancel:function(){
+				// go back to action selection
+				menu.states.set("select_action");
+				menu.nav(menu.action);
+				menu.action=null;
+			}
+		},
+
+		current:null,
+
+		set: function(state){
+			// switch state
+			menu.states.current = state;
+			
+			// initialize the new state
+			menu.states[menu.states.current].init();
+
+			// select the first menu item in the new state
+			menu.options[menu.selected].text = " "+menu.options[menu.selected].text+" ";
+			menu.nav(-menu.selected);
+		}
+	};
+
+	menu.states.set("select_party_member");
+
+
+
  
 
     menu.container = new PIXI.Container();
@@ -206,7 +501,15 @@ function init(){
 	window.onresize = onResize;
 	_resize();
 	main();
+
+
+
+
+
 }
+	turn={
+		taken:[]
+	};
 
 function update(){
 	var inputs={
@@ -238,6 +541,8 @@ function update(){
 	};
 
 
+	menu.update();
+
 	var dir=[0,0];
 	if(inputs.up){
 		dir[1]-=1;
@@ -253,13 +558,19 @@ function update(){
 
 
 	if(inputs.select){
-		menu.options[menu.selected].select();
+		menu.select();
 	}
 	if(inputs.cancel){
-		bg.tx=0;
+		menu.cancel();
 	}
 
- 	bg.position.x = lerp(bg.position.x,-bg.tx,0.1);
+
+	for(var i = 0; i < lerps.length; ++i){
+		lerps[i].spr.position.y = lerp(lerps[i].spr.position.y, lerps[i].t.y, lerps[i].by);
+		lerps[i].spr.position.x = lerp(lerps[i].spr.position.x, lerps[i].t.x, lerps[i].by);
+	}
+
+	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
 	// cycle palettes
 	screen_filter.uniforms.uPalette = 5;//(Math.floor(curTime/1000)%6)/6;
@@ -278,4 +589,20 @@ function render(){
 	}catch(e){
 		renderer.render(scene,null,true,false);
 	}
+}
+
+
+lerps=[];
+function addLerp(_spr,_by){
+	var l={
+		t:{
+			x:_spr.position.x,
+			y:_spr.position.y,
+		},
+		spr:_spr,
+		by:_by
+	};
+
+	_spr.lerp=l;
+	lerps.push(l);
 }

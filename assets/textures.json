@@ -2,7 +2,7 @@
 
 "blob.png":
 {
-	"frame": {"x":160,"y":16,"w":32,"h":32},
+	"frame": {"x":224,"y":16,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -10,7 +10,7 @@
 },
 "blob_idle_1.png":
 {
-	"frame": {"x":0,"y":16,"w":32,"h":32},
+	"frame": {"x":64,"y":16,"w":32,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
@@ -40,31 +40,15 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":4,"h":5},
 	"sourceSize": {"w":4,"h":5}
 },
+"pointer.png":
+{
+	"frame": {"x":0,"y":16,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "soldier_idle_1.png":
-{
-	"frame": {"x":192,"y":16,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-"soldier_idle_2.png":
-{
-	"frame": {"x":64,"y":16,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-"soldier_idle_3.png":
-{
-	"frame": {"x":128,"y":16,"w":32,"h":32},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
-	"sourceSize": {"w":32,"h":32}
-},
-"soldier_idle_4.png":
 {
 	"frame": {"x":96,"y":16,"w":32,"h":32},
 	"rotated": false,
@@ -72,9 +56,33 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
 	"sourceSize": {"w":32,"h":32}
 },
+"soldier_idle_2.png":
+{
+	"frame": {"x":192,"y":16,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"soldier_idle_3.png":
+{
+	"frame": {"x":160,"y":16,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
+"soldier_idle_4.png":
+{
+	"frame": {"x":128,"y":16,"w":32,"h":32},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+	"sourceSize": {"w":32,"h":32}
+},
 "tile_blank.png":
 {
-	"frame": {"x":244,"y":0,"w":16,"h":16},
+	"frame": {"x":212,"y":0,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -210,7 +218,7 @@
 },
 "tile_water.png":
 {
-	"frame": {"x":212,"y":0,"w":16,"h":16},
+	"frame": {"x":244,"y":0,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -223,6 +231,6 @@
 	"format": "RGBA8888",
 	"size": {"w":304,"h":304},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:53957a0192357e5de291c845f062375b:21705348695ddc28cbbf2c2514d64045:cf827d152df04949dfee256cd0c8efd8$"
+	"smartupdate": "$TexturePacker:SmartUpdate:cd27c9d71d57fc43895a3369333bdd74:de2b5e46b04292b27eae9b3b6e94b11a:cf827d152df04949dfee256cd0c8efd8$"
 }
 }
