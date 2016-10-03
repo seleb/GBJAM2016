@@ -14,7 +14,13 @@ var keys={
 	S: 83,
 	D: 68,
 
+	Z:90,
+	X:88,
+
 	SPACE: 32,
+	ENTER: 13,
+	BACKSPACE: 8,
+	ESCAPE: 27,
 
 	capture:[],
 
