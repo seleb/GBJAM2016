@@ -425,6 +425,8 @@ function update(){
 			gamepads.isJustDown(gamepads.X)
 	};
 
+	sprite_pointer.visible=game.state=="player_turn";
+
 	switch(game.state){
 		case "player_turn":
 			menu.update();
