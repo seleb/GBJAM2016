@@ -145,7 +145,7 @@ var Character=function(_name, _enemy, _slot){
 	this.spr=spr;
 	addLerp(spr,0.25);
 	spr.gotoAndPlay(_slot%2==0 ? 0 : spr.totalFrames/2);
-	spr.animationSpeed= 1/20*spr.totalFrames;
+	spr.animationSpeed= 1/40*spr.totalFrames;
 	
 	var ui=getUI();
 	ui.position.x=this.battleSlot.x;
