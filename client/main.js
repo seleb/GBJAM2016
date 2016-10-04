@@ -453,7 +453,7 @@ function update(){
 		case "enemy_turn":
 			// TODO: delay these to make it look like they're "thinking"
 			if(turn.timer <= 0){
-				turn.timer = 100;
+				turn.timer = 240;
 				if(turn.taken.length < turn.player_available.length+turn.enemy_available.length){
 					// add an enemy turn
 					var t={
