@@ -115,6 +115,70 @@ var character_templates={
 };
 
 
+
+
+var UI=function(){
+	this.container=new PIXI.Container();
+	var base=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_base.png"));
+	var base2=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_base2.png"));
+	this.sp=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_sp.png"));
+	this.hp=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_hp.png"));
+	var icon_attack=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_attack.png"));
+	var icon_defend=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_defend.png"));
+	var icon_special=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_special.png"));
+	var icon_skull=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_skull.png"));
+	var icon_unknown=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_unknown.png"));
+
+	this.icons={
+		attack:icon_attack,
+		defend:icon_defend,
+		sp:icon_special,
+		skull:icon_skull,
+		unknown:icon_unknown
+	};
+
+	this.container.addChild(base2);
+	this.container.addChild(this.sp);
+	this.container.addChild(base);
+	this.container.addChild(this.hp);
+	this.container.addChild(icon_attack);
+	this.container.addChild(icon_defend);
+	this.container.addChild(icon_special);
+	this.container.addChild(icon_skull);
+	this.container.addChild(icon_unknown);
+
+	
+
+	this.hp.position.y=2;
+	this.hp.position.x=6;
+	
+	this.sp.position.y=5;
+	this.sp.position.x=6;
+	
+
+	this.setHp(1);
+	this.setSp(3);
+	this.setIcon(null);
+};
+UI.prototype.setIcon=function(_icon){
+	for(var i in this.icons){
+		this.icons[i].visible=false;
+	}
+	if(_icon != null){
+		if(this.icons[_icon]){
+			this.icons[_icon].visible=true;
+		}else{
+			this.icons.sp.visible=true;
+		}
+	}
+};
+UI.prototype.setHp=function(_percent){
+	this.hp.width=_percent <= 0 ? 0 : Math.max(1,_percent*13);
+};
+UI.prototype.setSp=function(_v){
+	this.sp.width=clamp(0,_v,3)/3*13;
+};
+
 var Character=function(_name, _enemy, _slot){
 	this.template=character_templates[_name];
 
@@ -147,9 +211,9 @@ var Character=function(_name, _enemy, _slot){
 	spr.gotoAndPlay(_slot%2==0 ? 0 : spr.totalFrames/2);
 	spr.animationSpeed= 1/40*spr.totalFrames;
 	
-	var ui=getUI();
-	ui.position.x=this.battleSlot.x;
-	ui.position.y=this.battleSlot.y-16;
+	var ui=new UI();
+	ui.container.position.x=this.battleSlot.x;
+	ui.container.position.y=this.battleSlot.y-16;
 	this.ui=ui;
 };
 

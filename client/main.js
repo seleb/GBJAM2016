@@ -52,11 +52,11 @@ function init(){
 
 	for(var i = 0; i < player_party.length; ++i){
 		scene.addChild(player_party[i].spr);
-		scene.addChild(player_party[i].ui);
+		scene.addChild(player_party[i].ui.container);
 	}
 	for(var i = 0; i < enemy_party.length; ++i){
 		scene.addChild(enemy_party[i].spr);
-		scene.addChild(enemy_party[i].ui);
+		scene.addChild(enemy_party[i].ui.container);
 	}
 
 
@@ -559,68 +559,4 @@ function addLerp(_spr,_by){
 
 	_spr.lerp=l;
 	lerps.push(l);
-}
-
-
-function getUI(){
-	var ui = new PIXI.Container();
-
-	var base=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_base.png"));
-	var base2=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_base2.png"));
-	var sp=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_sp.png"));
-	var hp=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_hp.png"));
-	var icon_attack=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_attack.png"));
-	var icon_defend=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_defend.png"));
-	var icon_special=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_special.png"));
-	var icon_skull=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_skull.png"));
-	var icon_unknown=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_unknown.png"));
-
-	ui.icons={
-		attack:icon_attack,
-		defend:icon_defend,
-		sp:icon_special,
-		skull:icon_skull,
-		unknown:icon_unknown
-	}
-
-	ui.addChild(base2);
-	ui.addChild(sp);
-	ui.addChild(base);
-	ui.addChild(hp);
-	ui.addChild(icon_attack);
-	ui.addChild(icon_defend);
-	ui.addChild(icon_special);
-	ui.addChild(icon_skull);
-	ui.addChild(icon_unknown);
-
-	ui.setIcon=function(_icon){
-		for(var i in this.icons){
-			this.icons[i].visible=false;
-		}
-		if(_icon != null){
-			if(this.icons[_icon]){
-				this.icons[_icon].visible=true;
-			}else{
-				this.icons.sp.visible=true;
-			}
-		}
-	};
-
-	hp.position.y=2;
-	hp.position.x=6;
-	ui.setHp=function(_percent){
-		hp.width=_percent <= 0 ? 0 : Math.max(1,_percent*13);
-	};
-	sp.position.y=5;
-	sp.position.x=6;
-	ui.setSp=function(_v){
-		sp.width=clamp(0,_v,3)/3*13;
-	};
-
-	ui.setHp(1);
-	ui.setSp(3);
-	ui.setIcon(null);
-
-
-	return ui;
 }
