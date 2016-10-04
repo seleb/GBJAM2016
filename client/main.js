@@ -223,7 +223,7 @@ function init(){
 
 
 				// skip player turn if no party members are available
-				if(!turn.player_turns > 0){
+				if(!turn.player_available.length > 0){
 					game.state="enemy_turn";
 				}
 			},
@@ -322,7 +322,7 @@ function init(){
 					target:menu.target_party[menu.selected]
 				});
 
-				if(turn.taken.length == turn.player_turns){
+				if(turn.taken.length == turn.player_available.length){
 					// TODO if all turns are taken, commit enemy turns and play out action
 					
 
@@ -391,8 +391,9 @@ function init(){
 }
 	turn={
 		taken:[],
-		player_turns:0,
-		enemy_turns:0
+		player_available:[],
+		enemy_available:[],
+		timer:0
 	};
 
 function update(){
@@ -451,23 +452,33 @@ function update(){
 			break;
 		case "enemy_turn":
 			// TODO: delay these to make it look like they're "thinking"
-			for(var i = 0; i < enemy_party.length; ++i){
-				var t={
-					sourceId:i,
-					source:enemy_party[i]
-				};
-				t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
-				t.action = t.source.actions[t.actionId];
-				t.targetParty = t.action.friendly ? enemy_party : player_party;
-				t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
-				t.target = t.targetParty[t.targetId];
+			if(turn.timer <= 0){
+				turn.timer = 100;
+				if(turn.taken.length < turn.player_available.length+turn.enemy_available.length){
+					// add an enemy turn
+					var t={
+						sourceId:turn.enemy_available[turn.taken.length-turn.player_available.length]
+					};
+					t.source = enemy_party[t.sourceId];
+					t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
+					t.action = t.source.actions[t.actionId];
+					t.targetParty = t.action.friendly ? enemy_party : player_party;
+					t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
+					t.target = t.targetParty[t.targetId];
 
-				t.source.spr.lerp.t.x-=8;
+					t.source.spr.lerp.t.x-=8;
+					t.source.ui.setIcon(t.action.name);
 
-				turn.taken.push(t);
+					turn.taken.push(t);
+
+					sounds["sfx_select"].play();
+				}else{
+					// go to the next state
+					game.state="animation";
+				}
+			}else{
+				turn.timer-=deltaTime;
 			}
-			console.log("enemy_turn");
-			game.state="animation";
 			break;
 		case "animation":
 			// TODO: delay these and add some actual animation
@@ -477,7 +488,6 @@ function update(){
 				t.action.trigger(t.source,t.target);
 			}
 
-			console.log("animation");
 			game.state="end";
 			break;
 		case "end":
@@ -495,10 +505,16 @@ function update(){
 
 			turn.taken=[]; // just resets
 
-			turn.player_turns=0;
+			turn.player_available=[];
 			for(var i = 0; i < player_party.length; ++i){
 				if(!player_party[i].isDead()){
-					turn.player_turns+=1;
+					turn.player_available.push(i);
+				}
+			}
+			turn.enemy_available=[];
+			for(var i = 0; i < enemy_party.length; ++i){
+				if(!enemy_party[i].isDead()){
+					turn.enemy_available.push(i);
 				}
 			}
 
