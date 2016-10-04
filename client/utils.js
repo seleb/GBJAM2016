@@ -54,10 +54,20 @@ function nextPowerOfTwo(v){
 	return Math.pow(2, Math.ceil(Math.log(v)/Math.log(2)));
 }
 
-function getFrames(_texture, _frames){
+function getFrames(_texture){
 	var res=[];
-	for(var i = 1; i <= _frames; ++i){
-		res.push(PIXI.Texture.fromFrame(_texture+"_"+i+".png"));
-	}
+	var i = 0;
+	do{
+		i+=1;
+		var t=_texture+"_"+i+".png";
+		
+		if(!PIXI.loader.resources.spritesheet.textures[t]){
+			break;
+		}
+		t=PIXI.Texture.fromFrame(t);
+		
+		res.push(t);
+	}while(i<32);
+
 	return res;
 }

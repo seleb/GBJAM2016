@@ -18,165 +18,20 @@ function init(){
 	keys.init();
 
 
-
-	var action_attack={
-		name:"attack",
-		description:"attack an enemy for physical damage",
-		friendly:false,
-		cost:0,
-		trigger:function(source,target){
-			console.log(source.name+" attacked "+target.name);
-			target.stats.hp -= source.stats.str;
-		}
-	};
-	var action_defend={
-		name:"defend",
-		description:"put up defenses to reduce incoming damage\nrecovers 1 ap",
-		friendly:true,
-		cost:-1,
-		trigger:function(source,target){
-			console.log(source.name+" defended "+target.name);
-			source.stats.sp += 1;
-		}
-	};
-
-	player_party=[
-		{
-			name:"buddy 1",
-			sprite:null,
-			stats:{
-				str:5,
-				int:5,
-				def:5,
-				hp:32,
-				hp_max:32,
-				sp:3
-			},
-			actions:[
-				action_attack,
-				action_defend,
-				{
-					name:"smash",
-					description:"attack for double physical damage\ncosts 2 ap",
-					friendly:false,
-					cost:3,
-					trigger:function(source,target){
-						console.log(source.name+" did a ap on "+target.name);
-						source.stats.sp-=3;
-						target.stats.hp -= source.stats.str*2;
-					}
-				}
-			]
-		},
-		{
-			name:"buddy 2",
-			sprite:null,
-			stats:{
-				str:5,
-				int:5,
-				def:5,
-				hp:32,
-				hp_max:32,
-				sp:3
-			},
-			actions:[
-				action_attack,
-				action_defend,
-				{
-					name:"inspire",
-					description:"fully restore target's ap\ncosts 3 ap",
-					friendly:true,
-					cost:3,
-					trigger:function(source,target){
-						console.log(source.name+" inspired "+target.name);
-						source.stats.sp -= 3;
-						target.stats.sp = 3;
-					}
-				}
-			]
-		},
-		{
-			name:"buddy 3",
-			sprite:null,
-			stats:{
-				str:5,
-				int:5,
-				def:5,
-				hp:32,
-				hp_max:32,
-				sp:3
-			},
-			actions:[
-				action_attack,
-				action_defend,
-				{
-					name:"heal",
-					description:"partially restore target's hp\ncosts 2 ap",
-					friendly:true,
-					cost:2,
-					trigger:function(source,target){
-						console.log(source.name+" healed "+target.name);
-						source.stats.sp -= 3;
-						target.stats.hp += source.stats.int;
-					}
-				}
-			]
-		}
-	];
-	enemy_party=[
-		{
-			name:"blob1",
-			sprite:null,
-			stats:{
-				str:5,
-				int:5,
-				def:5,
-				hp:32,
-				hp_max:32,
-				sp:3
-			},
-			actions:[
-				action_attack,
-				action_defend
-			]
-		},
-		{
-			name:"blob2",
-			sprite:null,
-			stats:{
-				str:5,
-				int:5,
-				def:5,
-				hp:32,
-				hp_max:32,
-				sp:3
-			},
-			actions:[
-				action_attack,
-				action_defend
-			]
-		},
-		{
-			name:"blob3",
-			sprite:null,
-			stats:{
-				str:5,
-				int:5,
-				def:5,
-				hp:32,
-				hp_max:32,
-				sp:3
-			},
-			actions:[
-				action_attack,
-				action_defend
-			]
-		}
-	];
-
-
 	scene = new PIXI.Container;
 	game.addChild(scene);
+
+
+	player_party=[
+		new Character("buddy1",false,1),
+		new Character("buddy2",false,2),
+		new Character("buddy3",false,3)
+	];
+	enemy_party=[
+		new Character("blob",true,1),
+		new Character("blob",true,2),
+		new Character("blob",true,3)
+	];
 
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
 
@@ -194,6 +49,16 @@ function init(){
 	addLerp(bg,0.1);
 	bg.cacheAsBitmap=true;
 	scene.addChild(bg);
+
+	for(var i = 0; i < player_party.length; ++i){
+		scene.addChild(player_party[i].spr);
+		scene.addChild(player_party[i].ui);
+	}
+	for(var i = 0; i < enemy_party.length; ++i){
+		scene.addChild(enemy_party[i].spr);
+		scene.addChild(enemy_party[i].ui);
+	}
+
 
 	var tiles=PIXI.loader.resources.tilemap.data;
 	{
@@ -226,102 +91,6 @@ function init(){
 			}
 		}
 		}
-	}
-
-
-	{
-		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
-		spr.position.x=96;
-		spr.position.y=47-8;
-		addLerp(spr,0.25);
-		spr.gotoAndPlay(0);
-		spr.animationSpeed=1/20;
-		scene.addChild(spr);
-		enemy_party[0].spr=spr;
-		var ui =getUI();
-		ui.setIcon("unknown");
-		scene.addChild(ui);
-		ui.position.x=spr.position.x;
-		ui.position.y=spr.position.y-16;
-		enemy_party[0].ui=ui;
-	}
-	{
-		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
-		spr.position.x=112;
-		spr.position.y=47;
-		addLerp(spr,0.25);
-		spr.gotoAndPlay(1);
-		spr.animationSpeed=1/20;
-		scene.addChild(spr);
-		enemy_party[1].spr=spr;
-		var ui =getUI();
-		ui.setIcon("unknown");
-		scene.addChild(ui);
-		ui.position.x=spr.position.x;
-		ui.position.y=spr.position.y-16;
-		enemy_party[1].ui=ui;
-	}
-	{
-		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
-		spr.position.x=128;
-		spr.position.y=47+8;
-		addLerp(spr,0.25);
-		spr.gotoAndPlay(0);
-		spr.animationSpeed=1/20;
-		scene.addChild(spr);
-		enemy_party[2].spr=spr;
-		var ui =getUI();
-		ui.setIcon("unknown");
-		scene.addChild(ui);
-		ui.position.x=spr.position.x;
-		ui.position.y=spr.position.y-16;
-		enemy_party[2].ui=ui;
-	}
-
-	{
-		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
-		spr.position.x=32;
-		spr.position.y=47-8;
-		addLerp(spr,0.25);
-		spr.gotoAndPlay(0);
-		spr.animationSpeed=1/10;
-		scene.addChild(spr);
-		player_party[0].spr=spr
-		var ui =getUI();
-		scene.addChild(ui);
-		ui.position.x=spr.position.x;
-		ui.position.y=spr.position.y-16;
-		player_party[0].ui=ui;
-	}
-	{
-		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
-		spr.position.x=16;
-		spr.position.y=47;
-		addLerp(spr,0.25);
-		spr.gotoAndPlay(2);
-		spr.animationSpeed=1/10;
-		scene.addChild(spr);
-		player_party[1].spr=spr
-		var ui =getUI();
-		scene.addChild(ui);
-		ui.position.x=spr.position.x;
-		ui.position.y=spr.position.y-16;
-		player_party[1].ui=ui;
-	}
-	{
-		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
-		spr.position.x=0;
-		spr.position.y=47+8;
-		addLerp(spr,0.25);
-		spr.gotoAndPlay(0);
-		spr.animationSpeed=1/10;
-		scene.addChild(spr);
-		player_party[2].spr=spr
-		var ui =getUI();
-		scene.addChild(ui);
-		ui.position.x=spr.position.x;
-		ui.position.y=spr.position.y-16;
-		player_party[2].ui=ui;
 	}
 
 	sprite_pointer=new PIXI.Container();
@@ -648,6 +417,9 @@ function update(){
 				t.targetParty = t.action.friendly ? enemy_party : player_party;
 				t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
 				t.target = t.targetParty[t.targetId];
+
+				t.source.spr.lerp.t.x-=8;
+
 				turn.taken.push(t);
 			}
 			console.log("enemy_turn");
@@ -667,11 +439,25 @@ function update(){
 		case "end":
 			console.log("end");
 			for(var i = 0; i < player_party.length; ++i){
-				player_party[i].ui.setIcon(null);
-				player_party[i].spr.lerp.t.x-=8;
+				player_party[i].ui.setIcon(player_party[i].isDead() ? "skull" : null);
+				player_party[i].spr.lerp.t.x=player_party[i].battleSlot.x;
+				player_party[i].spr.lerp.t.y=player_party[i].battleSlot.y;
+			}
+			for(var i = 0; i < enemy_party.length; ++i){
+				enemy_party[i].ui.setIcon(enemy_party[i].isDead() ? "skull" : null);
+				enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.x;
+				enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.y;
 			}
 
 			turn.taken=[]; // just resets
+
+			turn.player_turns=0;
+			for(var i = 0; i < player_party.length; ++i){
+				if(!player_party[i].isDead()){
+					turn.player_turns+=1;
+				}
+			}
+
 			menu.states.set("select_party_member");
 			menu.sourceId=null;
 			menu.actionId=null;
@@ -763,12 +549,14 @@ function getUI(){
 	var icon_attack=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_attack.png"));
 	var icon_defend=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_defend.png"));
 	var icon_special=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_special.png"));
+	var icon_skull=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_skull.png"));
 	var icon_unknown=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_unknown.png"));
 
 	ui.icons={
 		attack:icon_attack,
 		defend:icon_defend,
 		sp:icon_special,
+		skull:icon_skull,
 		unknown:icon_unknown
 	}
 
@@ -779,6 +567,7 @@ function getUI(){
 	ui.addChild(icon_attack);
 	ui.addChild(icon_defend);
 	ui.addChild(icon_special);
+	ui.addChild(icon_skull);
 	ui.addChild(icon_unknown);
 
 	ui.setIcon=function(_icon){
@@ -797,7 +586,7 @@ function getUI(){
 	hp.position.y=2;
 	hp.position.x=6;
 	ui.setHp=function(_percent){
-		hp.width=_percent*13;
+		hp.width=_percent <= 0 ? 0 : Math.max(1,_percent*13);
 	};
 	sp.position.y=5;
 	sp.position.x=6;
