@@ -203,18 +203,29 @@ var Character=function(_name, _enemy, _slot){
 		this.battleSlot.x = 160-32-this.battleSlot.x;
 	}
 	
-	var spr=new PIXI.extras.MovieClip(getFrames(this.template.sprite+"_idle"));
-	spr.position.x=this.battleSlot.x;
-	spr.position.y=this.battleSlot.y;
-	this.spr=spr;
-	addLerp(spr,0.25);
-	spr.gotoAndPlay(_slot%2==0 ? 0 : spr.totalFrames/2);
-	spr.animationSpeed= 1/40*spr.totalFrames;
+	this.spr=new PIXI.Container();
+
+	this.animations={
+		idle:null,
+		dead:null
+	};
+
+	for(var i in this.animations){
+		this.animations[i] = new PIXI.extras.MovieClip(getFrames(this.template.sprite+"_"+i));
+		this.animations[i].animationSpeed= 1/40*this.animations[i].totalFrames;
+		this.spr.addChild(this.animations[i]);
+	}
+
+	this.spr.position.x=this.battleSlot.x;
+	this.spr.position.y=this.battleSlot.y;
+	addLerp(this.spr,0.25);
 	
 	var ui=new UI();
 	ui.container.position.x=this.battleSlot.x;
 	ui.container.position.y=this.battleSlot.y-16;
 	this.ui=ui;
+
+	this.setAnimation("idle");
 };
 
 Character.prototype.isDead=function(){
@@ -223,6 +234,9 @@ Character.prototype.isDead=function(){
 Character.prototype.setHp=function(v,by){
 	this.stats.hp = clamp(0, by ? this.stats.hp+v : v, this.stats.hp_max);
 	this.ui.setHp(this.stats.hp/this.stats.hp_max);
+	if(this.isDead()){
+		this.setAnimation("dead");
+	}
 	return this.stats.hp;
 };
 Character.prototype.setSp=function(v,by){
@@ -230,3 +244,18 @@ Character.prototype.setSp=function(v,by){
 	this.ui.setSp(this.stats.sp);
 	return this.stats.sp;
 };
+Character.prototype.setAnimation=function(_animation){
+	// hide all animations
+	for(var i in this.animations){
+		this.animations[i].visible=false;
+	}
+
+	// show selected animation
+	this.animations[_animation].visible=true;
+	// play selected animation
+	if(_animation == "idle"){
+		this.animations[_animation].gotoAndPlay(this.battleSlot.id%2==0 ? 0 : this.animations[i].totalFrames/2)
+	}else{
+		this.animations[_animation].gotoAndPlay(0);
+	}
+}
