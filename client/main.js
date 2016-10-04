@@ -144,7 +144,7 @@ function init(){
 
 	menu.selected=0;
 	menu.nav=function(_by){
-		menu.options[menu.selected].text=menu.options[menu.selected].text.substr(1,menu.options[menu.selected].text.length-2);
+		menu.options[menu.selected].text=menu.options[menu.selected].text.trim();
 		menu.options[menu.selected].tint = menu.options[menu.selected].disabled ? 0x666666 : 0xCCCCCC;
 		menu.selected+=_by;
 
@@ -168,6 +168,14 @@ function init(){
 
 		sounds["sfx_move"].play();
 	};
+	menu.navReset=function(){
+		for(var i = 0; i < menu.options.length; ++i){
+			menu.options[i].text=menu.options[i].text.trim();
+			menu.options[i].tint = menu.options[i].disabled ? 0x666666 : 0xCCCCCC;
+		}
+		menu.selected=0;
+		menu.nav(0);
+	};
 	menu.next=function(){
 		menu.nav(1);
 	};
@@ -189,20 +197,34 @@ function init(){
 	menu.states={
 		"select_party_member":{
 			init:function(){
+
 				for(var i = 0; i < menu.options.length; ++i){
 					if(i < player_party.length){
 						menu.options[i].text = player_party[i].name;
 						menu.options[i].enable();
 
-						for(var j = 0; j < turn.taken.length; ++j){
-							if(i == turn.taken[j].sourceId){
-								menu.options[i].disable();
+						if(player_party[i].isDead()){
+							menu.options[i].disable();
+						}else{
+							for(var j = 0; j < turn.taken.length; ++j){
+								if(i == turn.taken[j].sourceId){
+									menu.options[i].disable();
+								}
 							}
 						}
 					}else{
 						menu.options[i].text = "";
 						menu.options[i].disable();
 					}
+				}
+
+
+
+
+
+				// skip player turn if no party members are available
+				if(!turn.player_turns > 0){
+					game.state="enemy_turn";
 				}
 			},
 			update:function(){
@@ -300,7 +322,7 @@ function init(){
 					target:menu.target_party[menu.selected]
 				});
 
-				if(turn.taken.length == player_party.length){
+				if(turn.taken.length == turn.player_turns){
 					// TODO if all turns are taken, commit enemy turns and play out action
 					
 
@@ -331,8 +353,7 @@ function init(){
 			menu.states[menu.states.current].init();
 
 			// select the first menu item in the new state
-			menu.options[menu.selected].text = " "+menu.options[menu.selected].text+" ";
-			menu.nav(-menu.selected);
+			menu.navReset();
 		}
 	};
 
@@ -358,7 +379,7 @@ function init(){
 
 
 
-	game.state="player_turn";
+	game.state="end";
 
 
 	// start the main loop
@@ -369,7 +390,9 @@ function init(){
 
 }
 	turn={
-		taken:[]
+		taken:[],
+		player_turns:0,
+		enemy_turns:0
 	};
 
 function update(){
