@@ -427,6 +427,27 @@ function update(){
 	switch(game.state){
 		case "player_turn":
 			menu.update();
+
+			var dir=[0,0];
+			if(inputs.up){
+				dir[1]-=1;
+			}if(inputs.down){
+				dir[1]+=1;
+			}
+
+			if(dir[1] > 0){
+				menu.next();
+			}else if(dir[1] < 0){
+				menu.prev();
+			}
+
+
+			if(inputs.select){
+				menu.select();
+			}
+			if(inputs.cancel){
+				menu.cancel();
+			}
 			break;
 		case "enemy_turn":
 			// TODO: delay these to make it look like they're "thinking"
@@ -487,28 +508,6 @@ function update(){
 
 			game.state="player_turn";
 			break;
-	}
-	menu.update();
-
-	var dir=[0,0];
-	if(inputs.up){
-		dir[1]-=1;
-	}if(inputs.down){
-		dir[1]+=1;
-	}
-
-	if(dir[1] > 0){
-		menu.next();
-	}else if(dir[1] < 0){
-		menu.prev();
-	}
-
-
-	if(inputs.select){
-		menu.select();
-	}
-	if(inputs.cancel){
-		menu.cancel();
 	}
 
 
