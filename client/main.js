@@ -23,16 +23,20 @@ function init(){
 		name:"attack",
 		description:"attack an enemy for physical damage",
 		friendly:false,
+		cost:0,
 		trigger:function(source,target){
 			console.log(source.name+" attacked "+target.name);
+			target.stats.hp -= source.stats.str;
 		}
 	};
 	var action_defend={
 		name:"defend",
-		description:"put up defenses to reduce incoming damage",
+		description:"put up defenses to reduce incoming damage\nrecovers 1 ap",
 		friendly:true,
+		cost:-1,
 		trigger:function(source,target){
 			console.log(source.name+" defended "+target.name);
+			source.stats.sp += 1;
 		}
 	};
 
@@ -43,17 +47,23 @@ function init(){
 			stats:{
 				str:5,
 				int:5,
-				def:5
+				def:5,
+				hp:32,
+				hp_max:32,
+				sp:3
 			},
 			actions:[
 				action_attack,
 				action_defend,
 				{
-					name:"special1",
-					description:"this is my special move",
+					name:"smash",
+					description:"attack for double physical damage\ncosts 2 ap",
 					friendly:false,
-					trigger:function(){
-						console.log(source.name+" defended "+target.name);
+					cost:3,
+					trigger:function(source,target){
+						console.log(source.name+" did a ap on "+target.name);
+						source.stats.sp-=3;
+						target.stats.hp -= source.stats.str*2;
 					}
 				}
 			]
@@ -64,17 +74,23 @@ function init(){
 			stats:{
 				str:5,
 				int:5,
-				def:5
+				def:5,
+				hp:32,
+				hp_max:32,
+				sp:3
 			},
 			actions:[
 				action_attack,
 				action_defend,
 				{
-					name:"special2",
-					description:"i also get a special move",
-					friendly:false,
-					trigger:function(){
-						console.log(source.name+" defended "+target.name);
+					name:"inspire",
+					description:"fully restore target's ap\ncosts 3 ap",
+					friendly:true,
+					cost:3,
+					trigger:function(source,target){
+						console.log(source.name+" inspired "+target.name);
+						source.stats.sp -= 3;
+						target.stats.sp = 3;
 					}
 				}
 			]
@@ -85,11 +101,25 @@ function init(){
 			stats:{
 				str:5,
 				int:5,
-				def:5
+				def:5,
+				hp:32,
+				hp_max:32,
+				sp:3
 			},
 			actions:[
 				action_attack,
-				action_defend
+				action_defend,
+				{
+					name:"heal",
+					description:"partially restore target's hp\ncosts 2 ap",
+					friendly:true,
+					cost:2,
+					trigger:function(source,target){
+						console.log(source.name+" healed "+target.name);
+						source.stats.sp -= 3;
+						target.stats.hp += source.stats.int;
+					}
+				}
 			]
 		}
 	];
@@ -100,8 +130,15 @@ function init(){
 			stats:{
 				str:5,
 				int:5,
-				def:5
-			}
+				def:5,
+				hp:32,
+				hp_max:32,
+				sp:3
+			},
+			actions:[
+				action_attack,
+				action_defend
+			]
 		},
 		{
 			name:"blob2",
@@ -109,8 +146,15 @@ function init(){
 			stats:{
 				str:5,
 				int:5,
-				def:5
-			}
+				def:5,
+				hp:32,
+				hp_max:32,
+				sp:3
+			},
+			actions:[
+				action_attack,
+				action_defend
+			]
 		},
 		{
 			name:"blob3",
@@ -118,8 +162,15 @@ function init(){
 			stats:{
 				str:5,
 				int:5,
-				def:5
-			}
+				def:5,
+				hp:32,
+				hp_max:32,
+				sp:3
+			},
+			actions:[
+				action_attack,
+				action_defend
+			]
 		}
 	];
 
@@ -181,70 +232,103 @@ function init(){
 	{
 		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
 		spr.position.x=96;
-		spr.position.y=63-8;
+		spr.position.y=47-8;
 		addLerp(spr,0.25);
 		spr.gotoAndPlay(0);
 		spr.animationSpeed=1/20;
 		scene.addChild(spr);
 		enemy_party[0].spr=spr;
+		var ui =getUI();
+		ui.setIcon("unknown");
+		scene.addChild(ui);
+		ui.position.x=spr.position.x;
+		ui.position.y=spr.position.y-16;
+		enemy_party[0].ui=ui;
 	}
 	{
 		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
 		spr.position.x=112;
-		spr.position.y=63;
+		spr.position.y=47;
 		addLerp(spr,0.25);
 		spr.gotoAndPlay(1);
 		spr.animationSpeed=1/20;
 		scene.addChild(spr);
 		enemy_party[1].spr=spr;
+		var ui =getUI();
+		ui.setIcon("unknown");
+		scene.addChild(ui);
+		ui.position.x=spr.position.x;
+		ui.position.y=spr.position.y-16;
+		enemy_party[1].ui=ui;
 	}
 	{
 		var spr=new PIXI.extras.MovieClip(getFrames("blob_idle",2));
 		spr.position.x=128;
-		spr.position.y=63+8;
+		spr.position.y=47+8;
 		addLerp(spr,0.25);
 		spr.gotoAndPlay(0);
 		spr.animationSpeed=1/20;
 		scene.addChild(spr);
 		enemy_party[2].spr=spr;
+		var ui =getUI();
+		ui.setIcon("unknown");
+		scene.addChild(ui);
+		ui.position.x=spr.position.x;
+		ui.position.y=spr.position.y-16;
+		enemy_party[2].ui=ui;
 	}
 
 	{
 		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
 		spr.position.x=32;
-		spr.position.y=63-8;
+		spr.position.y=47-8;
 		addLerp(spr,0.25);
 		spr.gotoAndPlay(0);
 		spr.animationSpeed=1/10;
 		scene.addChild(spr);
-		player_party[0].spr=spr;
+		player_party[0].spr=spr
+		var ui =getUI();
+		scene.addChild(ui);
+		ui.position.x=spr.position.x;
+		ui.position.y=spr.position.y-16;
+		player_party[0].ui=ui;
 	}
 	{
 		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
 		spr.position.x=16;
-		spr.position.y=63;
+		spr.position.y=47;
 		addLerp(spr,0.25);
 		spr.gotoAndPlay(2);
 		spr.animationSpeed=1/10;
 		scene.addChild(spr);
-		player_party[1].spr=spr;
+		player_party[1].spr=spr
+		var ui =getUI();
+		scene.addChild(ui);
+		ui.position.x=spr.position.x;
+		ui.position.y=spr.position.y-16;
+		player_party[1].ui=ui;
 	}
 	{
 		var spr=new PIXI.extras.MovieClip(getFrames("soldier_idle",4));
 		spr.position.x=0;
-		spr.position.y=63+8;
+		spr.position.y=47+8;
 		addLerp(spr,0.25);
 		spr.gotoAndPlay(0);
 		spr.animationSpeed=1/10;
 		scene.addChild(spr);
-		player_party[2].spr=spr;
+		player_party[2].spr=spr
+		var ui =getUI();
+		scene.addChild(ui);
+		ui.position.x=spr.position.x;
+		ui.position.y=spr.position.y-16;
+		player_party[2].ui=ui;
 	}
 
 	sprite_pointer=new PIXI.Container();
 	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
 	sprite_pointer.addChild(sprite_pointer.actualSprite);
 	sprite_pointer.position.x=0;
-	sprite_pointer.position.y=64+16-9-32;
+	sprite_pointer.position.y=0;
 	addLerp(sprite_pointer,0.5);
 	scene.addChild(sprite_pointer);
 
@@ -342,7 +426,7 @@ function init(){
 						menu.options[i].enable();
 
 						for(var j = 0; j < turn.taken.length; ++j){
-							if(i == turn.taken[j].source){
+							if(i == turn.taken[j].sourceId){
 								menu.options[i].disable();
 							}
 						}
@@ -354,15 +438,15 @@ function init(){
 			},
 			update:function(){
 				sprite_pointer.lerp.t.x = player_party[menu.selected].spr.position.x;
-				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.position.y-32;
+				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.position.y-48;
 			},
 			nav:function(){
-				menu.descriptionTxt.text=player_party[menu.selected].stats.toString();
+				menu.descriptionTxt.text="";
 			},
 			select:function(){
-				menu.source=menu.selected;
+				menu.sourceId=menu.selected;
 				menu.states.set("select_action");
-				player_party[menu.source].spr.lerp.t.x += 8;
+				player_party[menu.sourceId].spr.lerp.t.x += 8;
 			},
 			cancel:function(){
 				if(turn.taken.length > 0){
@@ -370,10 +454,10 @@ function init(){
 					// and replicate the previous turn right before commit
 					// (selected party member, action, and target)
 					var t=turn.taken.pop();
-					menu.source=t.source;
-					menu.action=t.action;
+					menu.sourceId=t.sourceId;
+					menu.actionId=t.actionId;
 					menu.states.set("select_target");
-					menu.nav(t.target);
+					menu.nav(t.targetId);
 				}else{
 					// this is the base state, can't go back any further
 				}
@@ -382,9 +466,13 @@ function init(){
 		"select_action":{
 			init:function(){
 				for(var i = 0; i < menu.options.length; ++i){
-					if(i < player_party[menu.source].actions.length){
-						menu.options[i].text = player_party[menu.source].actions[i].name;
+					if(i < player_party[menu.sourceId].actions.length){
+						menu.options[i].text = player_party[menu.sourceId].actions[i].name;
 						menu.options[i].enable();
+
+						if(player_party[menu.sourceId].actions[i].cost > player_party[menu.sourceId].stats.sp){
+							menu.options[i].disable();
+						}
 					}else{
 						menu.options[i].text = "";
 						menu.options[i].disable();
@@ -392,24 +480,24 @@ function init(){
 				}
 			},
 			update:function(){
-				sprite_pointer.lerp.t.x = player_party[menu.source].spr.position.x;
-				sprite_pointer.lerp.t.y = player_party[menu.source].spr.position.y-32;
+				sprite_pointer.lerp.t.x = player_party[menu.sourceId].spr.position.x;
+				sprite_pointer.lerp.t.y = player_party[menu.sourceId].spr.position.y-32;
 			},
 			nav:function(){
-				menu.descriptionTxt.text = player_party[menu.source].actions[menu.selected].description;
+				menu.descriptionTxt.text = player_party[menu.sourceId].actions[menu.selected].description;
 			},
 			select:function(){
-				menu.action = menu.selected;
-				menu.target_party = player_party[menu.source].actions[menu.action].friendly ? player_party : enemy_party;
+				menu.actionId = menu.selected;
+				menu.target_party = player_party[menu.sourceId].actions[menu.actionId].friendly ? player_party : enemy_party;
 				menu.states.set("select_target");
-
+				player_party[menu.sourceId].ui.setIcon(player_party[menu.sourceId].actions[menu.actionId].name);
 			},
 			cancel:function(){
 				// go back to party member selection
-				player_party[menu.source].spr.lerp.t.x -= 8;
+				player_party[menu.sourceId].spr.lerp.t.x -= 8;
 				menu.states.set("select_party_member");
-				menu.nav(menu.source);
-				menu.source=null;
+				menu.nav(menu.sourceId);
+				menu.sourceId=null;
 			}
 		},
 		"select_target":{
@@ -426,38 +514,41 @@ function init(){
 			},
 			update:function(){
 				sprite_pointer.lerp.t.x = menu.target_party[menu.selected].spr.position.x;
-				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.position.y-32;
+				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.position.y-48;
 			},
 			nav:function(){
-				menu.descriptionTxt.text = player_party[menu.source].name+" :\n"+player_party[menu.source].actions[menu.action].name + " " + menu.target_party[menu.selected].name;
+				menu.descriptionTxt.text = player_party[menu.sourceId].name+" :\n"+player_party[menu.sourceId].actions[menu.actionId].name + " " + menu.target_party[menu.selected].name;
 			},
 			select:function(){
 				// commit the turn
 				turn.taken.push({
-					source:menu.source,
-					action:menu.action,
-					target:menu.selected
+					sourceId:menu.sourceId,
+					actionId:menu.actionId,
+					targetId:menu.selected,
+					targetParty:menu.targetParty,
+					source:player_party[menu.sourceId],
+					action:player_party[menu.sourceId].actions[menu.actionId],
+					target:menu.target_party[menu.selected]
 				});
 
 				if(turn.taken.length == player_party.length){
 					// TODO if all turns are taken, commit enemy turns and play out action
 					
-					turn.taken=[]; // just resets
-					menu.states.set("select_party_member");
-					menu.source=null;
-					menu.action=null;
+
+					game.state="enemy_turn";
 				}else{
 					// start over
 					menu.states.set("select_party_member");
-					menu.source=null;
-					menu.action=null;
+					menu.sourceId=null;
+					menu.actionId=null;
 				}
 			},
 			cancel:function(){
 				// go back to action selection
 				menu.states.set("select_action");
-				menu.nav(menu.action);
-				menu.action=null;
+				menu.nav(menu.actionId);
+				menu.actionId=null;
+				player_party[menu.sourceId].ui.setIcon(null);
 			}
 		},
 
@@ -496,13 +587,15 @@ function init(){
 
 	scene.addChild(menu);
 
+
+
+	game.state="player_turn";
+
+
 	// start the main loop
 	window.onresize = onResize;
 	_resize();
 	main();
-
-
-
 
 
 }
@@ -539,7 +632,53 @@ function update(){
 			gamepads.isJustDown(gamepads.X)
 	};
 
+	switch(game.state){
+		case "player_turn":
+			menu.update();
+			break;
+		case "enemy_turn":
+			// TODO: delay these to make it look like they're "thinking"
+			for(var i = 0; i < enemy_party.length; ++i){
+				var t={
+					sourceId:i,
+					source:enemy_party[i]
+				};
+				t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
+				t.action = t.source.actions[t.actionId];
+				t.targetParty = t.action.friendly ? enemy_party : player_party;
+				t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
+				t.target = t.targetParty[t.targetId];
+				turn.taken.push(t);
+			}
+			console.log("enemy_turn");
+			game.state="animation";
+			break;
+		case "animation":
+			// TODO: delay these and add some actual animation
+			
+			for(var i = 0; i < turn.taken.length; ++i){
+				var t = turn.taken[i];
+				t.action.trigger(t.source,t.target);
+			}
 
+			console.log("animation");
+			game.state="end";
+			break;
+		case "end":
+			console.log("end");
+			for(var i = 0; i < player_party.length; ++i){
+				player_party[i].ui.setIcon(null);
+				player_party[i].spr.lerp.t.x-=8;
+			}
+
+			turn.taken=[]; // just resets
+			menu.states.set("select_party_member");
+			menu.sourceId=null;
+			menu.actionId=null;
+
+			game.state="player_turn";
+			break;
+	}
 	menu.update();
 
 	var dir=[0,0];
@@ -571,8 +710,15 @@ function update(){
 
 	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
+	// update ui bars
+	var characters=player_party.concat(enemy_party);
+	for(var i = 0; i < characters.length; ++i){
+		characters[i].ui.setHp(characters[i].stats.hp/characters[i].stats.hp_max);
+		characters[i].ui.setSp(characters[i].stats.sp);
+	}
+
 	// cycle palettes
-	screen_filter.uniforms.uPalette = 5;//(Math.floor(curTime/1000)%6)/6;
+	screen_filter.uniforms.uPalette = 5/5;//(Math.floor(curTime/1000)%6)/6;
 	//screen_filter.uniforms.uBrightness = 0;//Math.sin(curTime/1000);
 
 
@@ -604,4 +750,65 @@ function addLerp(_spr,_by){
 
 	_spr.lerp=l;
 	lerps.push(l);
+}
+
+
+function getUI(){
+	var ui = new PIXI.Container();
+
+	var base=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_base.png"));
+	var base2=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_base2.png"));
+	var sp=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_sp.png"));
+	var hp=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_hp.png"));
+	var icon_attack=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_attack.png"));
+	var icon_defend=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_defend.png"));
+	var icon_special=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_special.png"));
+	var icon_unknown=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_unknown.png"));
+
+	ui.icons={
+		attack:icon_attack,
+		defend:icon_defend,
+		sp:icon_special,
+		unknown:icon_unknown
+	}
+
+	ui.addChild(base2);
+	ui.addChild(sp);
+	ui.addChild(base);
+	ui.addChild(hp);
+	ui.addChild(icon_attack);
+	ui.addChild(icon_defend);
+	ui.addChild(icon_special);
+	ui.addChild(icon_unknown);
+
+	ui.setIcon=function(_icon){
+		for(var i in this.icons){
+			this.icons[i].visible=false;
+		}
+		if(_icon != null){
+			if(this.icons[_icon]){
+				this.icons[_icon].visible=true;
+			}else{
+				this.icons.sp.visible=true;
+			}
+		}
+	};
+
+	hp.position.y=2;
+	hp.position.x=6;
+	ui.setHp=function(_percent){
+		hp.width=_percent*13;
+	};
+	sp.position.y=5;
+	sp.position.x=6;
+	ui.setSp=function(_v){
+		sp.width=clamp(0,_v,3)/3*13;
+	};
+
+	ui.setHp(1);
+	ui.setSp(3);
+	ui.setIcon(null);
+
+
+	return ui;
 }
