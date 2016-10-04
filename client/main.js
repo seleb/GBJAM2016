@@ -261,6 +261,7 @@ function init(){
 						menu.options[i].text = player_party[menu.sourceId].actions[i].name;
 						menu.options[i].enable();
 
+						// can't pick actions that cost more SP than you have
 						if(player_party[menu.sourceId].actions[i].cost > player_party[menu.sourceId].stats.sp){
 							menu.options[i].disable();
 						}
@@ -297,6 +298,11 @@ function init(){
 					if(i < menu.target_party.length){
 						menu.options[i].text = menu.target_party[i].name;
 						menu.options[i].enable();
+
+						// can't target dead characters
+						if(menu.target_party[i].isDead()){
+							menu.options[i].disable();
+						}
 					}else{
 						menu.options[i].text = "";
 						menu.options[i].disable();
@@ -462,11 +468,19 @@ function update(){
 						sourceId:turn.enemy_available[turn.taken.length-turn.player_available.length]
 					};
 					t.source = enemy_party[t.sourceId];
-					t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
-					t.action = t.source.actions[t.actionId];
+
+					// pick a random action (has to be affordable)
+					do{
+						t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
+						t.action = t.source.actions[t.actionId];
+					}while(t.action.cost > t.source.stats.sp);
+
+					// pick a random target (has to be alive)
 					t.targetParty = t.action.friendly ? enemy_party : player_party;
-					t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
-					t.target = t.targetParty[t.targetId];
+					do{
+						t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
+						t.target = t.targetParty[t.targetId];
+					}while(t.target.isDead());
 
 					t.source.spr.lerp.t.x-=8;
 					t.source.ui.setIcon(t.action.name);
