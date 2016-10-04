@@ -519,13 +519,6 @@ function update(){
 
 	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
-	// update ui bars
-	var characters=player_party.concat(enemy_party);
-	for(var i = 0; i < characters.length; ++i){
-		characters[i].ui.setHp(characters[i].stats.hp/characters[i].stats.hp_max);
-		characters[i].ui.setSp(characters[i].stats.sp);
-	}
-
 	// cycle palettes
 	screen_filter.uniforms.uPalette = 5/5;//(Math.floor(curTime/1000)%6)/6;
 	//screen_filter.uniforms.uBrightness = 0;//Math.sin(curTime/1000);

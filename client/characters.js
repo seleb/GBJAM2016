@@ -222,9 +222,11 @@ Character.prototype.isDead=function(){
 };
 Character.prototype.setHp=function(v,by){
 	this.stats.hp = clamp(0, by ? this.stats.hp+v : v, this.stats.hp_max);
+	this.ui.setHp(this.stats.hp/this.stats.hp_max);
 	return this.stats.hp;
 };
 Character.prototype.setSp=function(v,by){
 	this.stats.sp = clamp(0, by ? this.stats.sp+v : v, 3);
+	this.ui.setSp(this.stats.sp);
 	return this.stats.sp;
 };
