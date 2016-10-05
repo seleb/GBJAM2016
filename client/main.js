@@ -95,6 +95,7 @@ function init(){
 
 	sprite_pointer=new PIXI.Container();
 	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
+	sprite_pointer.actualSprite.anchor.x=0.5;
 	sprite_pointer.addChild(sprite_pointer.actualSprite);
 	sprite_pointer.position.x=0;
 	sprite_pointer.position.y=0;

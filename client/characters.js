@@ -129,6 +129,14 @@ var UI=function(){
 	var icon_skull=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_skull.png"));
 	var icon_unknown=new PIXI.Sprite(PIXI.Texture.fromFrame("character_ui_icon_unknown.png"));
 
+	base.anchor.x=0.5;
+	base2.anchor.x=0.5;
+	icon_attack.anchor.x=0.5;
+	icon_defend.anchor.x=0.5;
+	icon_special.anchor.x=0.5;
+	icon_skull.anchor.x=0.5;
+	icon_unknown.anchor.x=0.5;
+
 	this.icons={
 		attack:icon_attack,
 		defend:icon_defend,
@@ -138,9 +146,9 @@ var UI=function(){
 	};
 
 	this.container.addChild(base2);
-	this.container.addChild(this.sp);
+	base2.addChild(this.sp);
 	this.container.addChild(base);
-	this.container.addChild(this.hp);
+	base.addChild(this.hp);
 	this.container.addChild(icon_attack);
 	this.container.addChild(icon_defend);
 	this.container.addChild(icon_special);
@@ -150,10 +158,10 @@ var UI=function(){
 	
 
 	this.hp.position.y=2;
-	this.hp.position.x=6;
+	this.hp.position.x=-10;
 	
 	this.sp.position.y=5;
-	this.sp.position.x=6;
+	this.sp.position.x=-10;
 	
 
 	this.setHp(1);
@@ -195,25 +203,27 @@ var Character=function(_name, _enemy, _slot){
 
 	this.battleSlot={
 		id:_slot,
-		x: 16*(3-_slot),
+		x: 16+16*(3-_slot),
 		y: 33+8*_slot
 	};
 
 	if(_enemy){
-		this.battleSlot.x = 160-32-this.battleSlot.x;
+		this.battleSlot.x = 160-this.battleSlot.x;
 	}
 	
 	this.spr=new PIXI.Container();
 
 	this.animations={
 		idle:null,
-		dead:null
+		dead:null,
+		move:null
 	};
 
 	for(var i in this.animations){
 		this.animations[i] = new PIXI.extras.MovieClip(getFrames(this.template.sprite+"_"+i));
 		this.animations[i].animationSpeed= 1/40*this.animations[i].totalFrames;
 		this.spr.addChild(this.animations[i]);
+		this.animations[i].anchor.x=0.5;
 	}
 
 	this.spr.position.x=this.battleSlot.x;
