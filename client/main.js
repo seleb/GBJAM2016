@@ -50,13 +50,15 @@ function init(){
 	bg.cacheAsBitmap=true;
 	scene.addChild(bg);
 
+	// add characters
 	for(var i = 0; i < player_party.length; ++i){
-		scene.addChild(player_party[i].spr);
-		scene.addChild(player_party[i].ui.container);
-	}
-	for(var i = 0; i < enemy_party.length; ++i){
 		scene.addChild(enemy_party[i].spr);
+		scene.addChild(player_party[i].spr);
+	}
+	// add UI
+	for(var i = 0; i < enemy_party.length; ++i){
 		scene.addChild(enemy_party[i].ui.container);
+		scene.addChild(player_party[i].ui.container);
 	}
 
 
