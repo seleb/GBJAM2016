@@ -22,7 +22,7 @@ var action_defend={
 
 var character_templates={
 	buddy1:{
-		name:"buddy 1",
+		name:"soldier",
 		sprite:"soldier",
 		stats:{
 			str:4,
@@ -34,7 +34,7 @@ var character_templates={
 			action_attack,
 			action_defend,
 			{
-				name:"slice",
+				name:"slash",
 				description:"attack for double physical damage\ncosts 2 sp",
 				friendly:false,
 				cost:2,
@@ -47,8 +47,8 @@ var character_templates={
 		]
 	},
 	buddy2:{
-		name:"buddy 2",
-		sprite:"wizard",
+		name:"punchy",
+		sprite:"punchy",
 		stats:{
 			str:4,
 			int:5,
@@ -72,8 +72,8 @@ var character_templates={
 		]
 	},
 	buddy3:{
-		name:"buddy 3",
-		sprite:"soldier",
+		name:"wizard",
+		sprite:"wizard",
 		stats:{
 			str:4,
 			int:5,
@@ -231,8 +231,10 @@ var Character=function(_name, _enemy, _slot){
 		move_enemy:null
 	};
 
+
 	for(var i in this.animations){
 		this.animations[i] = new PIXI.extras.MovieClip(getFrames(this.template.sprite+"_"+i));
+		this.animations[i].visible = false;
 		this.animations[i].animationSpeed= 1/40*this.animations[i].totalFrames;
 		this.spr.addChild(this.animations[i]);
 		this.animations[i].anchor.x=0.5;
@@ -267,7 +269,8 @@ Character.prototype.setSp=function(v,by){
 	this.ui.setSp(this.stats.sp);
 	return this.stats.sp;
 };
-Character.prototype.setAnimation=function(_animation,_restart){
+Character.prototype.setAnimation=function(_animation){
+	var swap=!this.animations[_animation].visible;
 	// hide all animations
 	for(var i in this.animations){
 		this.animations[i].visible=false;
@@ -276,7 +279,7 @@ Character.prototype.setAnimation=function(_animation,_restart){
 	// show selected animation
 	this.animations[_animation].visible=true;
 	// play selected animation
-	if(_restart){
+	if(swap){
 		if(_animation == "idle"){
 			this.animations[_animation].gotoAndPlay(this.battleSlot.id%2==0 ? 0 : this.animations[i].totalFrames/2)
 		}else{
