@@ -237,6 +237,7 @@ var Character=function(_name, _enemy, _slot){
 		this.spr.addChild(this.animations[i]);
 		this.animations[i].anchor.x=0.5;
 	}
+	this.animations.move_enemy.animationSpeed*=2;
 
 	this.spr.position.x=this.battleSlot.x;
 	this.spr.position.y=this.battleSlot.y;
