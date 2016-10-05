@@ -22,6 +22,7 @@ function init(){
 	game.addChild(scene);
 
 	world = new PIXI.Container(); // container for all the in-game stuff (i.e. not the menu)
+	addLerp(world);
 
 	player_party=[
 		new Character("buddy1",false,1),
@@ -37,7 +38,7 @@ function init(){
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
 
 	screen_filter.uniforms.uPaletteSampler = PIXI.loader.resources.palette.texture;
-	screen_filter.uniforms.uPalette = 0;
+	screen_filter.uniforms.uPalette = 1;
 	screen_filter.uniforms.uBrightness = 0;
 
 	screen_filter.padding=0;
@@ -72,8 +73,8 @@ function init(){
 			if(tileId != -1){
 				var tileTex=tiles.tilesets[0].tiles[tileId].image;
 				var tile=new PIXI.Sprite(PIXI.Texture.fromFrame(tileTex));
-				tile.position.x=x*tiles.tilewidth;
-				tile.position.y=y*tiles.tileheight;
+				tile.position.x=(x-3)*tiles.tilewidth;
+				tile.position.y=(y-3)*tiles.tileheight;
 				bg.addChild(tile);
 			}
 		}
@@ -512,8 +513,7 @@ function update(){
 			}
 			break;
 		case "animation":
-			// TODO: delay these and add some actual animation
-			if(turn.timer <= 0){
+			if(turn.taken[0].done){
 				// prepare for next move
 				turn.timer=1000;
 
@@ -523,8 +523,6 @@ function update(){
 				t.source.spr.lerp.t.y = t.source.battleSlot.y;
 				
 				if(!t.source.isDead() && !t.target.isDead()){
-					t.action.trigger(t.source,t.target);
-					t.source.setAnimation("idle");
 				}
 
 				turn.taken.shift(1);
@@ -537,12 +535,33 @@ function update(){
 				turn.timer-=deltaTime;
 				var t = turn.taken[0];
 
-				if(!t.source.isDead() && !t.target.isDead()){
-					if(turn.timer > 250){
-						t.source.setAnimation("move_" + (t.action.friendly ? "friendly" : "enemy"));
+				// if source or target is dead before the action starts, skip it
+				if(!t.started && (t.source.isDead() || t.target.isDead())){
+					t.done=true;
+					turn.timer=0;
+				}
+
+				if(!t.done){
+
+					// move to target
+					if(!t.started){
+						t.started=true;
 						t.source.spr.lerp.t.x = t.target.battleSlot.x + (t.action.friendly ? 16 : 32) * (t.action.friendly==t.source.enemy ? -1 : 1);
 						t.source.spr.lerp.t.y = t.target.battleSlot.y;
-					}else{
+
+						sounds["sfx_swoosh"].play();
+					}
+
+					// play animation + trigger action
+					if(!t.hit && Math.abs(t.source.spr.lerp.t.x - t.source.spr.position.x) < 1){
+						t.source.setAnimation("move_" + (t.action.friendly ? "friendly" : "enemy"));
+						sounds["sfx_" + (t.action.friendly ? "buff" : "pow")].play();
+						t.hit = true;
+						menu.descriptionTxt.text = t.action.trigger(t.source,t.target);
+					}else if(turn.timer <= 0){
+						// done action
+						t.done = true;
+						t.source.setAnimation("idle");
 					}
 				}
 			}
@@ -607,7 +626,7 @@ function update(){
 	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
 	// cycle palettes
-	screen_filter.uniforms.uPalette = 5/5;//(Math.floor(curTime/1000)%6)/6;
+	//screen_filter.uniforms.uPalette = 5/5;//(Math.floor(curTime/1000)%6)/6;
 	//screen_filter.uniforms.uBrightness = 0;//Math.sin(curTime/1000);
 
 
@@ -634,7 +653,7 @@ function addLerp(_spr,_by){
 			y:_spr.position.y,
 		},
 		spr:_spr,
-		by:_by
+		by:_by||0.1
 	};
 
 	_spr.lerp=l;

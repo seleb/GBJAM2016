@@ -34,6 +34,7 @@ $(document).ready(function(){
 		volume:0
 	});
 
+	// menu SFX
 	sounds["sfx_select"] = new Howl({
 		urls:["assets/audio/sfx_2.wav"],
 		autoplay:false,
@@ -53,7 +54,27 @@ $(document).ready(function(){
 		volume:1
 	});
 
-	sounds["bgm"].fadeIn(1,1000);
+	// combat SFX
+	sounds["sfx_swoosh"] = new Howl({
+		urls:["assets/audio/sfx_4.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+	sounds["sfx_pow"] = new Howl({
+		urls:["assets/audio/sfx_3.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+	sounds["sfx_buff"] = new Howl({
+		urls:["assets/audio/sfx_5.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+
+	//sounds["bgm"].fadeIn(1,1000);
 
 	//Howler.mute();
 

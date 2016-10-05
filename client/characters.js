@@ -4,8 +4,9 @@ var action_attack={
 	friendly:false,
 	cost:0,
 	trigger:function(source,target){
-		console.log(source.name+" attacked "+target.name);
 		target.setHp(-source.stats.str,true);
+		target.stagger();
+		return source.name+" attacked "+target.name;
 	}
 };
 var action_defend={
@@ -14,8 +15,8 @@ var action_defend={
 	friendly:true,
 	cost:-1,
 	trigger:function(source,target){
-		console.log(source.name+" defended "+target.name);
 		source.setSp(1,true);
+		 return source.name+" defended "+target.name;
 	}
 };
 
@@ -39,9 +40,9 @@ var character_templates={
 				friendly:false,
 				cost:2,
 				trigger:function(source,target){
-					console.log(source.name+" sliced "+target.name);
 					source.setSp(-2,true);
 					target.setHp(-source.stats.str*2,true);
+					return source.name+" sliced "+target.name;
 				}
 			}
 		]
@@ -64,9 +65,9 @@ var character_templates={
 				friendly:true,
 				cost:3,
 				trigger:function(source,target){
-					console.log(source.name+" inspired "+target.name);
 					source.setSp(-3,true);
 					target.setSp(3);
+					return source.name+" inspired "+target.name;
 				}
 			}
 		]
@@ -89,9 +90,9 @@ var character_templates={
 				friendly:true,
 				cost:2,
 				trigger:function(source,target){
-					console.log(source.name+" healed "+target.name);
 					source.stats.sp -= 3;
 					target.stats.hp += source.stats.int;
+					return source.name+" healed "+target.name;
 				}
 			}
 		]
@@ -288,4 +289,8 @@ Character.prototype.setAnimation=function(_animation){
 	}else{
 		this.animations[_animation].play();		
 	}
-}
+};
+Character.prototype.stagger=function(){
+	this.spr.position.x += this.enemy ? 8 : -8;
+	world.position.x += this.enemy ? 2 : -2;
+};
