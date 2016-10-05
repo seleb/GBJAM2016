@@ -71,8 +71,8 @@ function init(){
 			if(tileId != -1){
 				var tileTex=tiles.tilesets[0].tiles[tileId].image;
 				var tile=new PIXI.Sprite(PIXI.Texture.fromFrame(tileTex));
-				tile.position.x=x*16;
-				tile.position.y=y*16;
+				tile.position.x=x*tiles.tilewidth;
+				tile.position.y=y*tiles.tileheight;
 				bg.addChild(tile);
 			}
 		}
@@ -87,8 +87,8 @@ function init(){
 			if(tileId != -1){
 				var tileTex=tiles.tilesets[0].tiles[tileId].image;
 				var tile=new PIXI.Sprite(PIXI.Texture.fromFrame(tileTex));
-				tile.position.x=x*16;
-				tile.position.y=y*16;
+				tile.position.x=x*tiles.tilewidth;
+				tile.position.y=y*tiles.tileheight;
 				menu.addChild(tile);
 			}
 		}
