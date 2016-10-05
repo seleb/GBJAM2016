@@ -18,9 +18,10 @@ function init(){
 	keys.init();
 
 
-	scene = new PIXI.Container;
+	scene = new PIXI.Container();
 	game.addChild(scene);
 
+	world = new PIXI.Container(); // container for all the in-game stuff (i.e. not the menu)
 
 	player_party=[
 		new Character("buddy1",false,1),
@@ -48,17 +49,17 @@ function init(){
 	bg = new PIXI.Container();
 	addLerp(bg,0.1);
 	bg.cacheAsBitmap=true;
-	scene.addChild(bg);
+	world.addChild(bg);
 
 	// add characters
 	for(var i = 0; i < player_party.length; ++i){
-		scene.addChild(enemy_party[i].spr);
-		scene.addChild(player_party[i].spr);
+		world.addChild(enemy_party[i].spr);
+		world.addChild(player_party[i].spr);
 	}
 	// add UI
 	for(var i = 0; i < enemy_party.length; ++i){
-		scene.addChild(enemy_party[i].ui.container);
-		scene.addChild(player_party[i].ui.container);
+		world.addChild(enemy_party[i].ui.container);
+		world.addChild(player_party[i].ui.container);
 	}
 
 
@@ -102,7 +103,7 @@ function init(){
 	sprite_pointer.position.x=0;
 	sprite_pointer.position.y=0;
 	addLerp(sprite_pointer,0.5);
-	scene.addChild(sprite_pointer);
+	menu.addChild(sprite_pointer);
 
 	menu.options=[
 		new PIXI.extras.BitmapText("option slot", fontStyle),
@@ -384,6 +385,7 @@ function init(){
 	menu.addChild(menu.container);
 
 
+	scene.addChild(world);
 	scene.addChild(menu);
 
 
