@@ -48,7 +48,7 @@ var character_templates={
 	},
 	buddy2:{
 		name:"buddy 2",
-		sprite:"soldier",
+		sprite:"wizard",
 		stats:{
 			str:4,
 			int:5,
@@ -101,6 +101,18 @@ var character_templates={
 	blob:{
 		name:"blob",
 		sprite:"blob",
+		stats:{
+			str:15,
+			int:5,
+			def:5,
+			hp_max:32
+		},
+		actions:[
+			action_attack
+		]
+	},skele:{
+		name:"skele",
+		sprite:"skele",
 		stats:{
 			str:15,
 			int:5,
@@ -254,7 +266,7 @@ Character.prototype.setSp=function(v,by){
 	this.ui.setSp(this.stats.sp);
 	return this.stats.sp;
 };
-Character.prototype.setAnimation=function(_animation){
+Character.prototype.setAnimation=function(_animation,_restart){
 	// hide all animations
 	for(var i in this.animations){
 		this.animations[i].visible=false;
@@ -263,9 +275,13 @@ Character.prototype.setAnimation=function(_animation){
 	// show selected animation
 	this.animations[_animation].visible=true;
 	// play selected animation
-	if(_animation == "idle"){
-		this.animations[_animation].gotoAndPlay(this.battleSlot.id%2==0 ? 0 : this.animations[i].totalFrames/2)
+	if(_restart){
+		if(_animation == "idle"){
+			this.animations[_animation].gotoAndPlay(this.battleSlot.id%2==0 ? 0 : this.animations[i].totalFrames/2)
+		}else{
+			this.animations[_animation].gotoAndPlay(0);
+		}
 	}else{
-		this.animations[_animation].gotoAndPlay(0);
+		this.animations[_animation].play();		
 	}
 }

@@ -28,9 +28,9 @@ function init(){
 		new Character("buddy3",false,3)
 	];
 	enemy_party=[
-		new Character("blob",true,1),
+		new Character("skele",true,1),
 		new Character("blob",true,2),
-		new Character("blob",true,3)
+		new Character("skele",true,3)
 	];
 
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
@@ -493,7 +493,7 @@ function update(){
 				}else{
 					// go to the next state
 					game.state="animation";
-					turn.timer=500;
+					turn.timer=1000;
 
 					// move back to slots before animations start
 					for(var i = 0; i < player_party.length; ++i){
@@ -513,7 +513,7 @@ function update(){
 			// TODO: delay these and add some actual animation
 			if(turn.timer <= 0){
 				// prepare for next move
-				turn.timer=500;
+				turn.timer=1000;
 
 				var t = turn.taken[0];
 				// move back to slot
