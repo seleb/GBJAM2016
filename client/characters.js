@@ -25,7 +25,7 @@ var character_templates={
 		name:"buddy 1",
 		sprite:"soldier",
 		stats:{
-			str:5,
+			str:4,
 			int:5,
 			def:5,
 			hp_max:32
@@ -50,7 +50,7 @@ var character_templates={
 		name:"buddy 2",
 		sprite:"soldier",
 		stats:{
-			str:5,
+			str:4,
 			int:5,
 			def:5,
 			hp_max:32
@@ -75,7 +75,7 @@ var character_templates={
 		name:"buddy 3",
 		sprite:"soldier",
 		stats:{
-			str:5,
+			str:4,
 			int:5,
 			def:5,
 			hp_max:32
@@ -108,8 +108,7 @@ var character_templates={
 			hp_max:32
 		},
 		actions:[
-			action_attack,
-			action_defend
+			action_attack
 		]
 	}
 };
@@ -206,7 +205,7 @@ var Character=function(_name, _enemy, _slot){
 		x: 16+16*(3-_slot),
 		y: 33+8*_slot
 	};
-
+	this.enemy=_enemy;
 	if(_enemy){
 		this.battleSlot.x = 160-this.battleSlot.x;
 	}
@@ -216,7 +215,8 @@ var Character=function(_name, _enemy, _slot){
 	this.animations={
 		idle:null,
 		dead:null,
-		move:null
+		move_friendly:null,
+		move_enemy:null
 	};
 
 	for(var i in this.animations){

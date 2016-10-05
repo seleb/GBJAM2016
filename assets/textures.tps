@@ -141,7 +141,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>img/textures.json</filename>
+                <filename>textures.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -188,16 +188,34 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">img/menu.png</key>
+            <key type="filename">img/blob.png</key>
+            <key type="filename">img/blob_dead_1.png</key>
+            <key type="filename">img/blob_idle_1.png</key>
+            <key type="filename">img/blob_idle_2.png</key>
+            <key type="filename">img/blob_move_1.png</key>
+            <key type="filename">img/character_ui_base.png</key>
+            <key type="filename">img/character_ui_base2.png</key>
+            <key type="filename">img/character_ui_hp.png</key>
+            <key type="filename">img/character_ui_icon_attack.png</key>
+            <key type="filename">img/character_ui_icon_defend.png</key>
+            <key type="filename">img/character_ui_icon_skull.png</key>
+            <key type="filename">img/character_ui_icon_special.png</key>
+            <key type="filename">img/character_ui_icon_unknown.png</key>
+            <key type="filename">img/character_ui_sp.png</key>
+            <key type="filename">img/icon.png</key>
             <key type="filename">img/palette.png</key>
-            <key type="filename">img/screen.png</key>
+            <key type="filename">img/pointer.png</key>
+            <key type="filename">img/soldier_dead_1.png</key>
             <key type="filename">img/soldier_idle_1.png</key>
             <key type="filename">img/soldier_idle_2.png</key>
             <key type="filename">img/soldier_idle_3.png</key>
             <key type="filename">img/soldier_idle_4.png</key>
-            <key type="filename">img/tile_0.png</key>
-            <key type="filename">img/tile_1.png</key>
+            <key type="filename">img/soldier_move_1.png</key>
             <key type="filename">img/tile_blank.png</key>
+            <key type="filename">img/tile_clouds_1.png</key>
+            <key type="filename">img/tile_floor_1.png</key>
+            <key type="filename">img/tile_floor_2.png</key>
+            <key type="filename">img/tile_floor_3.png</key>
             <key type="filename">img/tile_menu_b.png</key>
             <key type="filename">img/tile_menu_bl.png</key>
             <key type="filename">img/tile_menu_br.png</key>
@@ -206,6 +224,11 @@
             <key type="filename">img/tile_menu_t.png</key>
             <key type="filename">img/tile_menu_ul.png</key>
             <key type="filename">img/tile_menu_ur.png</key>
+            <key type="filename">img/tile_mountain_1.png</key>
+            <key type="filename">img/tile_mountain_2.png</key>
+            <key type="filename">img/tile_mountain_3.png</key>
+            <key type="filename">img/tile_sky.png</key>
+            <key type="filename">img/tile_water.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -213,24 +236,7 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>img/palette.png</filename>
-            <filename>img/menu.png</filename>
-            <filename>img/screen.png</filename>
-            <filename>img/soldier_idle_1.png</filename>
-            <filename>img/soldier_idle_2.png</filename>
-            <filename>img/soldier_idle_3.png</filename>
-            <filename>img/soldier_idle_4.png</filename>
-            <filename>img/tile_0.png</filename>
-            <filename>img/tile_1.png</filename>
-            <filename>img/tile_blank.png</filename>
-            <filename>img/tile_menu_b.png</filename>
-            <filename>img/tile_menu_bl.png</filename>
-            <filename>img/tile_menu_br.png</filename>
-            <filename>img/tile_menu_l.png</filename>
-            <filename>img/tile_menu_r.png</filename>
-            <filename>img/tile_menu_t.png</filename>
-            <filename>img/tile_menu_ul.png</filename>
-            <filename>img/tile_menu_ur.png</filename>
+            <filename>img</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

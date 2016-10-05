@@ -493,6 +493,17 @@ function update(){
 				}else{
 					// go to the next state
 					game.state="animation";
+					turn.timer=500;
+
+					// move back to slots before animations start
+					for(var i = 0; i < player_party.length; ++i){
+						player_party[i].spr.lerp.t.x = player_party[i].battleSlot.x;
+						player_party[i].spr.lerp.t.y = player_party[i].battleSlot.y;
+					}
+					for(var i = 0; i < enemy_party.length; ++i){
+						enemy_party[i].spr.lerp.t.x = enemy_party[i].battleSlot.x;
+						enemy_party[i].spr.lerp.t.y = enemy_party[i].battleSlot.y;
+					}
 				}
 			}else{
 				turn.timer-=deltaTime;
@@ -500,13 +511,40 @@ function update(){
 			break;
 		case "animation":
 			// TODO: delay these and add some actual animation
-			
-			for(var i = 0; i < turn.taken.length; ++i){
-				var t = turn.taken[i];
-				t.action.trigger(t.source,t.target);
+			if(turn.timer <= 0){
+				// prepare for next move
+				turn.timer=500;
+
+				var t = turn.taken[0];
+				// move back to slot
+				t.source.spr.lerp.t.x = t.source.battleSlot.x;
+				t.source.spr.lerp.t.y = t.source.battleSlot.y;
+				
+				if(!t.source.isDead() && !t.target.isDead()){
+					t.action.trigger(t.source,t.target);
+					t.source.setAnimation("idle");
+				}
+
+				turn.taken.shift(1);
+
+				// if there are no moves left, finish turn
+				if(turn.taken.length == 0){
+					game.state="end";
+				}
+			}else{
+				turn.timer-=deltaTime;
+				var t = turn.taken[0];
+
+				if(!t.source.isDead() && !t.target.isDead()){
+					if(turn.timer > 250){
+						t.source.setAnimation("move_" + (t.action.friendly ? "friendly" : "enemy"));
+						t.source.spr.lerp.t.x = t.target.battleSlot.x + (t.action.friendly ? 16 : 32) * (t.action.friendly==t.source.enemy ? -1 : 1);
+						t.source.spr.lerp.t.y = t.target.battleSlot.y;
+					}else{
+					}
+				}
 			}
 
-			game.state="end";
 			break;
 		case "end":
 			console.log("end");
@@ -536,11 +574,25 @@ function update(){
 				}
 			}
 
-			menu.states.set("select_party_member");
-			menu.sourceId=null;
-			menu.actionId=null;
 
-			game.state="player_turn";
+			if(turn.player_available.length == 0){
+				// all players dead
+				screen_filter.uniforms.uBrightness-=0.01;
+				if(screen_filter.uniforms.uBrightness < -1){
+					// go to loss state
+					screen_filter.uniforms.uBrightness=0;
+					console.log("game over!");
+				}
+			}else if(turn.enemy_available.length == 0){
+				// all enemies dead
+			}else{
+				// continue battle
+				menu.states.set("select_party_member");
+				menu.sourceId=null;
+				menu.actionId=null;
+
+				game.state="player_turn";
+			}
 			break;
 	}
 
