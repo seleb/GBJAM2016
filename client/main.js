@@ -23,7 +23,7 @@ function init(){
 	game.addChild(scene);
 
 	world = new PIXI.Container(); // container for all the in-game stuff (i.e. not the menu)
-	addLerp(world);
+	addLerp(world, 0.05);
 
 
 	// setup screen filter
@@ -398,19 +398,10 @@ function init(){
 						menu.options[i].disable();
 					}
 				}
-
-
-
-
-
-				// skip player turn if no party members are available
-				if(!turn.player_available.length > 0){
-					game.state="enemy_turn";
-				}
 			},
 			update:function(){
-				sprite_pointer.lerp.t.x = player_party[menu.selected].spr.position.x;
-				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.position.y-48;
+				sprite_pointer.lerp.t.x = player_party[menu.selected].spr.toGlobal(PIXI.zero).x;
+				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.toGlobal(PIXI.zero).y-48;
 			},
 			nav:function(){
 				menu.descriptionTxt.text="";
@@ -453,8 +444,8 @@ function init(){
 				}
 			},
 			update:function(){
-				sprite_pointer.lerp.t.x = player_party[menu.sourceId].spr.position.x;
-				sprite_pointer.lerp.t.y = player_party[menu.sourceId].spr.position.y-32;
+				sprite_pointer.lerp.t.x = player_party[menu.sourceId].spr.toGlobal(PIXI.zero).x;
+				sprite_pointer.lerp.t.y = player_party[menu.sourceId].spr.toGlobal(PIXI.zero).y-32;
 			},
 			nav:function(){
 				menu.descriptionTxt.text = player_party[menu.sourceId].actions[menu.selected].description;
@@ -491,8 +482,8 @@ function init(){
 				}
 			},
 			update:function(){
-				sprite_pointer.lerp.t.x = menu.target_party[menu.selected].spr.position.x;
-				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.position.y-48;
+				sprite_pointer.lerp.t.x = menu.target_party[menu.selected].spr.toGlobal(PIXI.zero).x;
+				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.toGlobal(PIXI.zero).y-48;
 			},
 			nav:function(){
 				menu.descriptionTxt.text = player_party[menu.sourceId].name+" :\n"+player_party[menu.sourceId].actions[menu.actionId].name + " " + menu.target_party[menu.selected].name;
@@ -583,16 +574,10 @@ function init(){
 	scene.addChild(menu);
 
 
-
-	game.state="end";
-
-
 	// start the main loop
 	window.onresize = onResize;
 	_resize();
 	main();
-
-
 }
 
 
@@ -615,16 +600,12 @@ function startGame(){
 
 	// add characters
 	for(var i = 0; i < player_party.length; ++i){
-		world.addChild(player_party[i].spr);
-		world.addChild(player_party[i].ui.container);
-
-		player_party[i].spr.position.x -= 64;
+		world.addChild(player_party[i].battleSlot);
+		//world.addChild(player_party[i].ui.container);
 	}
 	for(var i = 0; i < enemy_party.length; ++i){
-		world.addChild(enemy_party[i].spr);
-		world.addChild(enemy_party[i].ui.container);
-
-		enemy_party[i].spr.position.x += 64;
+		world.addChild(enemy_party[i].battleSlot);
+		//world.addChild(enemy_party[i].ui.container);
 	}
 
 	sprite_pointer=new PIXI.Container();
@@ -637,6 +618,8 @@ function startGame(){
 	menu.addChild(sprite_pointer);
 
 	screen_filter.uniforms.uBrightness=1;
+
+	game.state="moving_up";
 
 	sounds["music_battle"].play();
 	sounds["music_battle"].fadeIn(0.5,5000);
@@ -663,8 +646,26 @@ function update(){
 		// pointer bounce
 		sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 		switch(game.state){
+			case "moving_up":
+				world.lerp.t.x = -280;
+				if(Math.abs(world.lerp.t.x - world.position.x) < 1){
+					for(var i = 0; i < enemy_party.length; ++i){
+						enemy_party[i].battleSlot.lerp.t.x -= world.lerp.t.x;
+						enemy_party[i].battleSlot.position.x =enemy_party[i].battleSlot.lerp.t.x+160*(i+1);
+					}
+					for(var i = 0; i < player_party.length; ++i){
+						player_party[i].battleSlot.lerp.t.x -= world.lerp.t.x;
+						player_party[i].battleSlot.position.x = player_party[i].battleSlot.lerp.t.x-160*(i+1);
+					}
+					game.state="player_turn";
+				}
+				break;
 			case "player_turn":
-				menu.update();
+				if(turn.player_available.length > 0){
+					menu.update();
+				}else{
+					game.state="enemy_turn";
+				}
 				break;
 			case "enemy_turn":
 				if(turn.timer <= 0){
@@ -702,12 +703,12 @@ function update(){
 
 						// move back to slots before animations start
 						for(var i = 0; i < player_party.length; ++i){
-							player_party[i].spr.lerp.t.x = player_party[i].battleSlot.x;
-							player_party[i].spr.lerp.t.y = player_party[i].battleSlot.y;
+							player_party[i].spr.lerp.t.x = player_party[i].battleSlot.t.x;
+							player_party[i].spr.lerp.t.y = player_party[i].battleSlot.t.y;
 						}
 						for(var i = 0; i < enemy_party.length; ++i){
-							enemy_party[i].spr.lerp.t.x = enemy_party[i].battleSlot.x;
-							enemy_party[i].spr.lerp.t.y = enemy_party[i].battleSlot.y;
+							enemy_party[i].spr.lerp.t.x = enemy_party[i].battleSlot.t.x;
+							enemy_party[i].spr.lerp.t.y = enemy_party[i].battleSlot.t.y;
 						}
 					}
 				}else{
@@ -724,8 +725,8 @@ function update(){
 
 					var t = turn.taken[0];
 					// move back to slot
-					t.source.spr.lerp.t.x = t.source.battleSlot.x;
-					t.source.spr.lerp.t.y = t.source.battleSlot.y;
+					t.source.spr.lerp.t.x = t.source.battleSlot.t.x;
+					t.source.spr.lerp.t.y = t.source.battleSlot.t.y;
 
 					turn.taken.shift(1);
 				}else{
@@ -743,12 +744,12 @@ function update(){
 						// move to target
 						if(!t.started){
 							t.started=true;
-							t.source.spr.lerp.t.x = t.target.battleSlot.x + 16 * (t.action.friendly==t.source.enemy ? -1 : 1);
-							t.source.spr.lerp.t.y = t.target.battleSlot.y;
+							t.source.spr.lerp.t.x = t.target.battleSlot.t.x + 16 * (t.action.friendly==t.source.enemy ? -1 : 1);
+							t.source.spr.lerp.t.y = t.target.battleSlot.t.y;
 
 							sounds["sfx_swoosh"].play();
 							t.swap=world.children[world.children.length-1];
-							world.swapChildren(t.source.spr,t.swap);
+							world.swapChildren(t.source.battleSlot,t.swap);
 						}
 
 						// play animation + trigger action
@@ -761,24 +762,25 @@ function update(){
 							// done action
 							t.done = true;
 							t.source.setAnimation("idle");
-							world.swapChildren(t.source.spr,t.swap);
+							world.swapChildren(t.source.battleSlot,t.swap);
 						}
 					}
 				}
 
 				break;
 			case "end":
-				console.log("end");
 				for(var i = 0; i < player_party.length; ++i){
 					player_party[i].ui.setIcon(player_party[i].isDead() ? "skull" : null);
-					player_party[i].spr.lerp.t.x=player_party[i].battleSlot.x;
-					player_party[i].spr.lerp.t.y=player_party[i].battleSlot.y;
+					player_party[i].spr.lerp.t.x=player_party[i].battleSlot.t.x;
+					player_party[i].spr.lerp.t.y=player_party[i].battleSlot.t.y;
+
 					player_party[i].cancelBuffs();
 				}
 				for(var i = 0; i < enemy_party.length; ++i){
 					enemy_party[i].ui.setIcon(enemy_party[i].isDead() ? "skull" : "unknown");
-					enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.x;
-					enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.y;
+					enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.t.x;
+					enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.t.y;
+
 					enemy_party[i].cancelBuffs();
 				}
 

@@ -258,14 +258,16 @@ var Character=function(_name, _enemy, _slot){
 
 	this.actions=this.template.actions.slice();
 
-	this.battleSlot={
-		id:_slot,
-		x: 16+16*(3-_slot),
-		y: 33+8*_slot
+	this.battleSlot=new PIXI.Container();
+	this.battleSlot.id = _slot;
+	this.battleSlot.t={
+		x:16+16*(3-_slot),
+		y:33+8*_slot
 	};
+
 	this.enemy=_enemy;
 	if(_enemy){
-		this.battleSlot.x = 160-this.battleSlot.x;
+		this.battleSlot.t.x = 160-this.battleSlot.t.x;
 	}
 	
 	this.spr=new PIXI.Container();
@@ -287,14 +289,17 @@ var Character=function(_name, _enemy, _slot){
 	}
 	this.animations.move_enemy.animationSpeed*=2;
 
-	this.spr.position.x=this.battleSlot.x;
-	this.spr.position.y=this.battleSlot.y;
+	this.spr.position.x=this.battleSlot.t.x;
+	this.spr.position.y=this.battleSlot.t.y;
 	addLerp(this.spr,0.25);
+	addLerp(this.battleSlot,0.1);
 	
 	var ui=new UI();
-	ui.container.position.x=this.battleSlot.x;
-	ui.container.position.y=this.battleSlot.y-16;
+	ui.container.position.x=this.battleSlot.t.x;
+	ui.container.position.y=this.battleSlot.t.y-16;
 	this.ui=ui;
+	this.battleSlot.addChild(this.spr);
+	this.battleSlot.addChild(this.ui.container);
 
 	this.setAnimation("idle");
 };

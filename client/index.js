@@ -175,3 +175,5 @@ function _resize(){
 
 	console.log("Resized",size,w,h);
 }
+
+PIXI.zero=new PIXI.Point(0,0);
