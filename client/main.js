@@ -292,6 +292,7 @@ function init(){
 				menu.descriptionTxt.text=s;
 			},
 			select:function(){
+				var s="";
 				switch(menu.selected){
 					case 0:
 						s="select_party_member";
