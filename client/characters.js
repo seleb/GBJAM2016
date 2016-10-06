@@ -4,19 +4,20 @@ var action_attack={
 	friendly:false,
 	cost:0,
 	trigger:function(source,target){
-		target.setHp(-source.stats.str,true);
+		var dmg = Math.max(1, source.stats.str-target.stats.def);
+		target.setHp(-dmg,true);
 		target.stagger();
-		return source.name+" attacked "+target.name;
+		return source.name + (target.isDead() ? " defeated " : " attacked ") + target.name + "\nhp : -"+dmg;
 	}
 };
 var action_defend={
 	name:"defend",
-	description:"put up defenses to reduce incoming damage\nrecovers 1 sp",
+	description:"increase target's defense for 1 turn\nrestores 1 sp",
 	friendly:true,
 	cost:-1,
 	trigger:function(source,target){
-		source.setSp(1,true);
-		 return source.name+" defended "+target.name;
+		source.setSp(-this.cost,true);
+		return source.name+" is defending "+target.name;
 	}
 };
 
@@ -40,9 +41,11 @@ var character_templates={
 				friendly:false,
 				cost:2,
 				trigger:function(source,target){
-					source.setSp(-2,true);
-					target.setHp(-source.stats.str*2,true);
-					return source.name+" sliced "+target.name;
+					var dmg = Math.max(1, source.stats.str*2 - target.stats.def);
+					source.setSp(-this.cost,true);
+					target.setHp(-dmg,true);
+					target.stagger();
+					return source.name + (target.isDead() ? " defeated " : " sliced ") + target.name + "\nhp : -"+dmg;
 				}
 			}
 		]
@@ -61,13 +64,15 @@ var character_templates={
 			action_defend,
 			{
 				name:"inspire",
-				description:"fully restore target's sp\ncosts 3 sp",
+				description:"restore target's sp and some hp\ncosts 3 sp",
 				friendly:true,
 				cost:3,
 				trigger:function(source,target){
-					source.setSp(-3,true);
+					source.setSp(-this.cost,true);
 					target.setSp(3);
-					return source.name+" inspired "+target.name;
+					source.stats.sp -= 3;
+					target.stats.hp += source.stats.int;
+					return source.name+" inspired "+target.name+"\nhp : +"+source.stats.int;
 				}
 			}
 		]
@@ -86,13 +91,13 @@ var character_templates={
 			action_defend,
 			{
 				name:"heal",
-				description:"partially restore target's hp\ncosts 2 sp",
+				description:"partially restore target's hp\ncosts 1 sp",
 				friendly:true,
-				cost:2,
+				cost:1,
 				trigger:function(source,target){
-					source.stats.sp -= 3;
+					source.setSp(-this.cost,true);
 					target.stats.hp += source.stats.int;
-					return source.name+" healed "+target.name;
+					return source.name+" healed "+target.name + "\nhp  : +"+source.stats.int;
 				}
 			}
 		]
