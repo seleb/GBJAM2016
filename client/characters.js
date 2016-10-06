@@ -52,6 +52,7 @@ var character_templates={
 					source.setSp(-this.cost,true);
 					target.setHp(-dmg,true);
 					target.stagger();
+					flash();
 					return source.name + (target.isDead() ? " defeated " : " sliced ") + target.name + "\nhp : -"+dmg;
 				}
 			}
@@ -79,6 +80,7 @@ var character_templates={
 					source.setSp(-this.cost,true);
 					target.setSp(3);
 					target.setHp(heal,true);
+					flash();
 					return source.name+" inspired "+target.name+"\nhp : +"+heal;
 				}
 			}
@@ -106,6 +108,7 @@ var character_templates={
 					source.setSp(-this.cost,true);
 					target.setHp(-dmg,true);
 					target.stagger();
+					flash();
 					return source.name + (target.isDead() ? " defeated " : " fireballed ") + target.name + "\nhp : -"+dmg;
 				}
 			},
@@ -120,6 +123,7 @@ var character_templates={
 					if(sp > 0){
 						source.setSp(1,true);
 						target.setSp(-1,true);
+						flash(true);
 						return source.name+" drained 1 sp from "+target.name;
 					}else{
 						return source.name+" tried to drain sp, but "+target.name + " didn't have any";
@@ -135,6 +139,7 @@ var character_templates={
 					var heal=source.getStat("int");
 					source.setSp(-this.cost,true);
 					target.setHp(heal,true);
+					flash();
 					return source.name+" healed "+target.name + "\nhp : +"+heal;
 				}
 			}

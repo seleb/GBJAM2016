@@ -895,3 +895,8 @@ function toggleMute(){
 		Howler.mute();
 	}
 }
+
+
+function flash(_dark){
+	screen_filter.uniforms.uBrightness+=0.25 * (_dark ? -1 : 1);
+}
