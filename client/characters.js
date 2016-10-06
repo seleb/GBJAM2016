@@ -35,7 +35,7 @@ var character_templates={
 			str:6,
 			int:1,
 			def:6,
-			hp_max:64
+			hp_max:32
 		},
 		actions:[
 			action_attack,
