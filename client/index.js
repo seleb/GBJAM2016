@@ -126,9 +126,9 @@ $(document).ready(function(){
 	PIXI.loader
 		.add("screen_shader","assets/screen_shader.frag")
 		.add("spritesheet","assets/textures.json")
-		.add("tilemap","assets/img/tilemap.json")
+		.add("tilemap","assets/tilemap.json")
 		.add("font","assets/font/font.fnt")
-		.add("palette","assets/img/palette.png");
+		.add("palette","assets/palette.png");
 
 	PIXI.loader
 		.on("progress", loadProgressHandler)

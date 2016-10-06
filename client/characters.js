@@ -28,8 +28,8 @@ var action_defend={
 
 
 var character_templates={
-	buddy1:{
-		name:"soldier",
+	soldier:{
+		name:"knight",
 		sprite:"soldier",
 		stats:{
 			str:6,
@@ -57,7 +57,7 @@ var character_templates={
 			}
 		]
 	},
-	buddy2:{
+	punchy:{
 		name:"punchy",
 		sprite:"punchy",
 		stats:{
@@ -84,7 +84,7 @@ var character_templates={
 			}
 		]
 	},
-	buddy3:{
+	wizard:{
 		name:"wizard",
 		sprite:"wizard",
 		stats:{

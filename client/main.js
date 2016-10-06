@@ -270,8 +270,8 @@ function init(){
 
 				if(!menu.pocket_sprite){
 					menu.pocket_sprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pocket_edition.png"));
-					menu.pocket_sprite.position.x=size[0]-menu.pocket_sprite.width-3;
-					menu.pocket_sprite.position.y=size[1]-menu.pocket_sprite.height-35;
+					menu.pocket_sprite.position.x=size[0]-menu.pocket_sprite.width-4;
+					menu.pocket_sprite.position.y=size[1]-menu.pocket_sprite.height-36;
 					menu.addChild(menu.pocket_sprite);
 				}
 
@@ -603,9 +603,9 @@ function startGame(){
 	game.started=true;
 
 	player_party=[
-		new Character("buddy1",false,1),
-		new Character("buddy2",false,2),
-		new Character("buddy3",false,3)
+		new Character("soldier",false,1),
+		new Character("punchy",false,2),
+		new Character("wizard",false,3)
 	];
 	enemy_party=[
 		new Character("skele",true,1),
