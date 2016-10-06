@@ -202,13 +202,23 @@ function init(){
 				keys.isJustDown(keys.UP) ||
 				keys.isJustDown(keys.W) ||
 				gamepads.isJustDown(gamepads.DPAD_UP) ||
-				gamepads.axisJustPast(gamepads.LSTICK_V,-0.5),
+				gamepads.axisJustPast(gamepads.LSTICK_V,-0.5) ||
+
+				keys.isJustDown(keys.LEFT) ||
+				keys.isJustDown(keys.A) ||
+				gamepads.isJustDown(gamepads.DPAD_LEFT) ||
+				gamepads.axisJustPast(gamepads.LSTICK_H,-0.5),
 
 			down:
 				keys.isJustDown(keys.DOWN) ||
 				keys.isJustDown(keys.S) ||
 				gamepads.isJustDown(gamepads.DPAD_DOWN) ||
-				gamepads.axisJustPast(gamepads.LSTICK_V,0.5),
+				gamepads.axisJustPast(gamepads.LSTICK_V,0.5) ||
+
+				keys.isJustDown(keys.RIGHT) ||
+				keys.isJustDown(keys.D) ||
+				gamepads.isJustDown(gamepads.DPAD_RIGHT) ||
+				gamepads.axisJustPast(gamepads.LSTICK_H,0.5),
 
 			select:
 				keys.isJustDown(keys.Z) ||
