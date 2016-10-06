@@ -38,12 +38,30 @@ function init(){
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
 
 	screen_filter.uniforms.uPaletteSampler = PIXI.loader.resources.palette.texture;
-	screen_filter.uniforms.uPalette = 1;
+	screen_filter.uniforms.uPalette = 5/15;
 	screen_filter.uniforms.uBrightness = 0;
 
 	screen_filter.padding=0;
 
 	renderSprite.filters = [screen_filter];
+
+	palettes=[
+		"good ol' green (gameboy)",
+		"grayscale",
+		"not so good ol' green",
+		"diffused liquids",
+		"hallowe'en (default)",
+		"cmyk (zx spectrum)",
+		"blue (commodore 64)",
+		"crimson (pico-8)",
+		"1-bit",
+		"aqua (cga)",
+		"pastel (gbc)",
+		"(master system)",
+		"flat and dirty",
+		"venus in the 60s",
+		"\"web\"-\"safe\""
+	];
 
 
 	// screen background
@@ -629,7 +647,7 @@ function update(){
 	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
 	// cycle palettes
-	//screen_filter.uniforms.uPalette = 5/5;//(Math.floor(curTime/1000)%6)/6;
+	//screen_filter.uniforms.uPalette = curTime/1000%15/15;
 	//screen_filter.uniforms.uBrightness = 0;//Math.sin(curTime/1000);
 
 

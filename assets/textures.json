@@ -66,7 +66,7 @@
 },
 "character_ui_hp.png":
 {
-	"frame": {"x":17,"y":0,"w":13,"h":2},
+	"frame": {"x":13,"y":0,"w":13,"h":2},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":2},
@@ -114,7 +114,7 @@
 },
 "character_ui_sp.png":
 {
-	"frame": {"x":4,"y":0,"w":13,"h":1},
+	"frame": {"x":0,"y":0,"w":13,"h":1},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":13,"h":1},
@@ -130,11 +130,11 @@
 },
 "palette.png":
 {
-	"frame": {"x":0,"y":0,"w":4,"h":5},
+	"frame": {"x":26,"y":0,"w":4,"h":15},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":4,"h":5},
-	"sourceSize": {"w":4,"h":5}
+	"spriteSourceSize": {"x":0,"y":0,"w":4,"h":15},
+	"sourceSize": {"w":4,"h":15}
 },
 "pointer.png":
 {
@@ -695,6 +695,6 @@
 	"format": "RGBA8888",
 	"size": {"w":432,"h":432},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e30eb009d3c728b35f5ec244a5f33ad1:1070e267b9a335cf65271fee2e9c83d7:cf827d152df04949dfee256cd0c8efd8$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2493c01e53df7a954e108f0b84a2a0c2:a661fd9965ece8a665550ff5673a5ffa:cf827d152df04949dfee256cd0c8efd8$"
 }
 }
