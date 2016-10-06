@@ -6,4 +6,7 @@ TODO:
 - balance combat (character stats, abilities)
 - come up with name + update title graphic
 - implement scalemode option (fit, 1x, 2x, 3x, etc, maybe fullscreen)
+- more enemies
+- advanced enemy AI (enemies call a function which creates an action based on characters' hp, sp, etc.)
+- more audio?
 - rename punchy?
