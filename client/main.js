@@ -14,6 +14,7 @@ function main(){
 }
 
 function init(){
+	// initialize input managers
 	gamepads.init();
 	keys.init();
 
@@ -24,22 +25,13 @@ function init(){
 	world = new PIXI.Container(); // container for all the in-game stuff (i.e. not the menu)
 	addLerp(world);
 
-	player_party=[
-		new Character("buddy1",false,1),
-		new Character("buddy2",false,2),
-		new Character("buddy3",false,3)
-	];
-	enemy_party=[
-		new Character("skele",true,1),
-		new Character("blob",true,2),
-		new Character("skele",true,3)
-	];
 
+	// setup screen filter
 	screen_filter = new CustomFilter(PIXI.loader.resources.screen_shader.data);
 
 	screen_filter.uniforms.uPaletteSampler = PIXI.loader.resources.palette.texture;
-	screen_filter.uniforms.uPalette = 5/15;
-	screen_filter.uniforms.uBrightness = 0;
+	screen_filter.uniforms.uBrightness = -1;
+	screen_filter.targetBrightness = 0;
 
 	screen_filter.padding=0;
 
@@ -47,21 +39,23 @@ function init(){
 
 	palettes=[
 		"good ol' green (gameboy)",
+		"\"web\"-\"safe\"",
 		"grayscale",
 		"not so good ol' green",
 		"diffused liquids",
+		"1-bit",
 		"hallowe'en (default)",
 		"cmyk (zx spectrum)",
 		"blue (commodore 64)",
 		"crimson (pico-8)",
-		"1-bit",
 		"aqua (cga)",
 		"pastel (gbc)",
-		"(master system)",
-		"flat and dirty",
-		"venus in the 60s",
-		"\"web\"-\"safe\""
+		"taiga (master system)",
+		"flat and dirty (db16)",
+		"venus in the 60s (nes)"
 	];
+	currentPalette = 5;
+	swapPalette();
 
 
 	// screen background
@@ -69,17 +63,6 @@ function init(){
 	addLerp(bg,0.1);
 	bg.cacheAsBitmap=true;
 	world.addChild(bg);
-
-	// add characters
-	for(var i = 0; i < player_party.length; ++i){
-		world.addChild(enemy_party[i].spr);
-		world.addChild(player_party[i].spr);
-	}
-	// add UI
-	for(var i = 0; i < enemy_party.length; ++i){
-		world.addChild(enemy_party[i].ui.container);
-		world.addChild(player_party[i].ui.container);
-	}
 
 
 	var tiles=PIXI.loader.resources.tilemap.data;
@@ -114,15 +97,6 @@ function init(){
 		}
 		}
 	}
-
-	sprite_pointer=new PIXI.Container();
-	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
-	sprite_pointer.actualSprite.anchor.x=0.5;
-	sprite_pointer.addChild(sprite_pointer.actualSprite);
-	sprite_pointer.position.x=0;
-	sprite_pointer.position.y=0;
-	addLerp(sprite_pointer,0.5);
-	menu.addChild(sprite_pointer);
 
 	menu.options=[
 		new PIXI.extras.BitmapText("option slot", fontStyle),
@@ -274,6 +248,123 @@ function init(){
 	}
 
 	menu.states={
+		"main_menu":{
+			init:function(){
+				menu.options[0].text="start";
+				menu.options[1].text="options";
+				menu.options[2].text="about";
+
+				for(var i = 0; i < menu.options.length; ++i){
+					menu.options[i].enable();
+				}
+
+				if(!menu.pocket_sprite){
+					menu.pocket_sprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pocket_edition.png"));
+					menu.pocket_sprite.position.x=size[0]-menu.pocket_sprite.width-3;
+					menu.pocket_sprite.position.y=size[1]-menu.pocket_sprite.height-35;
+					menu.addChild(menu.pocket_sprite);
+				}
+
+				if(!menu.title_sprite){
+					menu.title_sprite=new PIXI.Sprite(PIXI.Texture.fromFrame("title.png"));
+					menu.title_sprite.position.x=size[0]/2;
+					menu.title_sprite.anchor.x=0.5;
+					menu.title_sprite.anchor.y=0.5;
+					menu.addChild(menu.title_sprite);
+				}
+			},
+			update:function(){
+				menu.title_sprite.position.y=size[1]/3+Math.sin(curTime/1000)*3;
+			},
+			nav:function(){
+				var s="";
+				switch(menu.selected){
+					case 0:
+						s="start a new game";
+						break;
+					case 1:
+						s="change stuff";
+						break;
+					case 2:
+						s="made by @seansleblanc for #gbjam 5\nwith pixi . js";
+						break;
+				}
+				menu.descriptionTxt.text=s;
+			},
+			select:function(){
+				switch(menu.selected){
+					case 0:
+						s="select_party_member";
+						menu.pocket_sprite.destroy();
+						menu.pocket_sprite=null;
+						menu.title_sprite.destroy();
+						menu.title_sprite=null;
+
+						startGame();
+						break;
+					case 1:
+						s="options_menu";
+						break;
+					case 2:
+						return;
+						break;
+				}
+
+
+				menu.states.set(s);
+			},
+			cancel:function(){
+				// nowhere to quit to
+			}
+		},
+		"options_menu":{
+			init:function(){
+				menu.options[0].text="sound";
+				menu.options[1].text="palette";
+				menu.options[2].text="scale";
+
+				for(var i = 0; i < menu.options.length; ++i){
+					menu.options[i].enable();
+				}
+			},
+			update:function(){
+				menu.title_sprite.position.y=size[1]/3+Math.sin(curTime/1000)*3;
+			},
+			nav:function(){
+				var s="";
+				switch(menu.selected){
+					case 0:
+						s="select to "+(Howler._muted ? "unmute" : "mute") + " audio";
+						break;
+					case 1:
+						s="select to change palette\ncurrent: " + palettes[currentPalette];
+						break;
+					case 2:
+						s="not implemented yet";
+						break;
+				}
+				menu.descriptionTxt.text=s;
+			},
+			select:function(){
+				var s=menu.descriptionTxt.text;
+				switch(menu.selected){
+					case 0:
+					toggleMute();
+						s="select to "+(Howler._muted ? "unmute" : "mute") + " audio";
+						break;
+					case 1:
+						swapPalette();
+						s="select to change palette\ncurrent: " + palettes[currentPalette];
+						break;
+					case 2:
+						break;
+				}
+				menu.descriptionTxt.text=s;
+			},
+			cancel:function(){
+				menu.states.set("main_menu");
+			}
+		},
 		"select_party_member":{
 			init:function(){
 
@@ -408,10 +499,14 @@ function init(){
 				});
 
 				if(turn.taken.length == turn.player_available.length){
-					// TODO if all turns are taken, commit enemy turns and play out action
-					
-
+					// all player turns committed, go to enemy turn
 					game.state="enemy_turn";
+					menu.selectionText.visible=false;
+					menu.selectionBg.visible=false;
+					for(var i = 0; i < menu.options.length; ++i){
+						menu.options[i].text="";
+					}
+					menu.descriptionTxt.text="";
 				}else{
 					// start over
 					menu.states.set("select_party_member");
@@ -456,7 +551,7 @@ function init(){
 		}
 	};
 
-	menu.states.set("select_party_member");
+	menu.states.set("main_menu");
 
 
 
@@ -473,7 +568,6 @@ function init(){
 	menu.container.addChild(menu.descriptionTxt);
 	menu.addChild(menu.container);
 
-
 	scene.addChild(world);
 	scene.addChild(menu);
 
@@ -489,20 +583,70 @@ function init(){
 
 
 }
-	turn={
-		taken:[],
-		player_available:[],
-		enemy_available:[],
-		timer:0
-	};
+
+
+
+
+
+function startGame(){
+	game.started=true;
+
+	player_party=[
+		new Character("buddy1",false,1),
+		new Character("buddy2",false,2),
+		new Character("buddy3",false,3)
+	];
+	enemy_party=[
+		new Character("skele",true,1),
+		new Character("blob",true,2),
+		new Character("skele",true,3)
+	];
+
+	// add characters
+	for(var i = 0; i < player_party.length; ++i){
+		world.addChild(player_party[i].spr);
+		world.addChild(player_party[i].ui.container);
+
+		player_party[i].spr.position.x -= 64;
+	}
+	for(var i = 0; i < enemy_party.length; ++i){
+		world.addChild(enemy_party[i].spr);
+		world.addChild(enemy_party[i].ui.container);
+
+		enemy_party[i].spr.position.x += 64;
+	}
+
+	sprite_pointer=new PIXI.Container();
+	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
+	sprite_pointer.actualSprite.anchor.x=0.5;
+	sprite_pointer.addChild(sprite_pointer.actualSprite);
+	sprite_pointer.position.x=0;
+	sprite_pointer.position.y=0;
+	addLerp(sprite_pointer,0.5);
+	menu.addChild(sprite_pointer);
+
+	screen_filter.uniforms.uBrightness=1;
+}
+
+
+
+
+turn={
+	taken:[],
+	player_available:[],
+	enemy_available:[],
+	timer:0
+};
 
 function update(){
-	sprite_pointer.visible=game.state=="player_turn";
 
 
 	if(!game.started){
 		menu.update();
 	}else{
+		sprite_pointer.visible=game.state=="player_turn";
+		// pointer bounce
+		sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 		switch(game.state){
 			case "player_turn":
 				menu.update();
@@ -639,10 +783,10 @@ function update(){
 
 				if(turn.player_available.length == 0){
 					// all players dead
-					screen_filter.uniforms.uBrightness-=0.01;
-					if(screen_filter.uniforms.uBrightness < -1){
+					screen_filter.targetBrightness=-1;
+					if(screen_filter.uniforms.uBrightness <= -1){
 						// go to loss state
-						screen_filter.uniforms.uBrightness=0;
+						screen_filter.targetBrightness=0;
 						console.log("game over!");
 					}
 				}else if(turn.enemy_available.length == 0){
@@ -659,8 +803,12 @@ function update(){
 		}
 	}
 
-	// pointer bounce
-	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
+	if(Math.abs(screen_filter.uniforms.uBrightness - screen_filter.targetBrightness) < 0.025){
+		screen_filter.uniforms.uBrightness= screen_filter.targetBrightness;
+	}else{
+		screen_filter.uniforms.uBrightness -= Math.sign(screen_filter.uniforms.uBrightness - screen_filter.targetBrightness)*0.025;
+	}
+
 
 
 	// update lerps
@@ -702,4 +850,18 @@ function addLerp(_spr,_by){
 
 	_spr.lerp=l;
 	lerps.push(l);
+}
+
+
+function swapPalette(){
+	currentPalette+=1;
+	currentPalette%=palettes.length;
+	screen_filter.uniforms.uPalette = (currentPalette+1)/palettes.length;
+}
+function toggleMute(){
+	if(Howler._muted){
+		Howler.unmute();
+	}else{
+		Howler.mute();
+	}
 }
