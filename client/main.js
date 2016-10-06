@@ -637,6 +637,10 @@ function startGame(){
 	menu.addChild(sprite_pointer);
 
 	screen_filter.uniforms.uBrightness=1;
+
+	sounds["music_battle"].play();
+	sounds["music_battle"].fadeIn(0.5,5000);
+	sounds["music_menu"].fadeOut(0,2000);
 }
 
 
