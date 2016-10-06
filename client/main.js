@@ -817,6 +817,17 @@ function update(){
 		lerps[i].spr.position.x = lerp(lerps[i].spr.position.x, lerps[i].t.x, lerps[i].by);
 	}
 
+
+	// shortcuts for mute/palette swap
+	if(keys.isJustDown(keys.M)){
+		toggleMute();
+		sounds["sfx_select"].play();
+	}
+	if(keys.isJustDown(keys.P)){
+		swapPalette();
+		sounds["sfx_select"].play();
+	}
+
 	// cycle palettes
 	//screen_filter.uniforms.uPalette = curTime/1000%15/15;
 	//screen_filter.uniforms.uBrightness = 0;//Math.sin(curTime/1000);

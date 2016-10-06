@@ -17,6 +17,9 @@ var keys={
 	Z:90,
 	X:88,
 
+	M:77,
+	P:80,
+
 	SPACE: 32,
 	ENTER: 13,
 	BACKSPACE: 8,
