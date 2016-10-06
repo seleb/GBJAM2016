@@ -27,9 +27,15 @@ $(document).ready(function(){
 
 	// setup game
 	startTime=Date.now();
-	sounds["bgm"] = new Howl({
+	sounds["menu_music"] = new Howl({
 		urls:["assets/audio/moody music.wav"],
-		autoplay:true,
+		autoplay:false,
+		loop:true,
+		volume:0
+	});
+	sounds["battle_music"] = new Howl({
+		urls:["assets/audio/battlemusic.wav"],
+		autoplay:false,
 		loop:true,
 		volume:0
 	});
@@ -74,7 +80,11 @@ $(document).ready(function(){
 		volume:1
 	});
 
-	//sounds["bgm"].fadeIn(1,1000);
+	//sounds["menu_music"].play();
+	//sounds["menu_music"].fadeIn(1,1000);
+
+	//sounds["battle_music"].play();
+	//sounds["battle_music"].fadeIn(0.5,1000);
 
 	//Howler.mute();
 
