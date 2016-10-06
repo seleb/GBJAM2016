@@ -546,10 +546,12 @@ function update(){
 					// move to target
 					if(!t.started){
 						t.started=true;
-						t.source.spr.lerp.t.x = t.target.battleSlot.x + (t.action.friendly ? 16 : 32) * (t.action.friendly==t.source.enemy ? -1 : 1);
+						t.source.spr.lerp.t.x = t.target.battleSlot.x + 16 * (t.action.friendly==t.source.enemy ? -1 : 1);
 						t.source.spr.lerp.t.y = t.target.battleSlot.y;
 
 						sounds["sfx_swoosh"].play();
+						t.swap=world.children[world.children.length-1];
+						world.swapChildren(t.source.spr,t.swap);
 					}
 
 					// play animation + trigger action
@@ -562,6 +564,7 @@ function update(){
 						// done action
 						t.done = true;
 						t.source.setAnimation("idle");
+						world.swapChildren(t.source.spr,t.swap);
 					}
 				}
 			}
