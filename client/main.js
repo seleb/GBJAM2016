@@ -127,7 +127,6 @@ function init(){
 	menu.options=[
 		new PIXI.extras.BitmapText("option slot", fontStyle),
 		new PIXI.extras.BitmapText("option slot", fontStyle),
-		new PIXI.extras.BitmapText("option slot", fontStyle),
 		new PIXI.extras.BitmapText("option slot", fontStyle)
 	];
 
@@ -167,11 +166,13 @@ function init(){
 
 	menu.selected=0;
 	menu.nav=function(_by){
+		// unhighlight current selection
 		menu.options[menu.selected].text=menu.options[menu.selected].text.trim();
 		menu.options[menu.selected].tint = menu.options[menu.selected].disabled ? 0x666666 : 0xCCCCCC;
-		menu.selected+=_by;
 
+		// update selection
 		// wrap-around menu and skip over disabled options
+		menu.selected+=_by;
 		while(menu.selected  < 0|| menu.selected >= menu.options.length || menu.options[menu.selected].disabled){
 			if(menu.selected < 0){
 				menu.selected+=menu.options.length;
@@ -182,6 +183,8 @@ function init(){
 				menu.selected += Math.abs(s) > 0 ? s : 1;
 			}
 		}
+
+		// highlight new selection
 		menu.options[menu.selected].text=" "+menu.options[menu.selected].text+" ";
 		menu.options[menu.selected].tint=0x333333;
 		menu.selectionBg.position.y = 4+8*menu.selected;
@@ -206,6 +209,10 @@ function init(){
 		menu.nav(-1);
 	};
 	menu.select=function(){
+		if(!menu.validOptions){
+			sounds["sfx_cancel"].play();
+			return;
+		}
 		menu.states[menu.states.current].select();
 		sounds["sfx_select"].play();
 	};
@@ -215,6 +222,55 @@ function init(){
 	};
 	menu.update=function(){
 		menu.states[menu.states.current].update();
+
+		var inputs={
+			up:
+				keys.isJustDown(keys.UP) ||
+				keys.isJustDown(keys.W) ||
+				gamepads.isJustDown(gamepads.DPAD_UP) ||
+				gamepads.axisJustPast(gamepads.LSTICK_V,-0.5),
+
+			down:
+				keys.isJustDown(keys.DOWN) ||
+				keys.isJustDown(keys.S) ||
+				gamepads.isJustDown(gamepads.DPAD_DOWN) ||
+				gamepads.axisJustPast(gamepads.LSTICK_V,0.5),
+
+			select:
+				keys.isJustDown(keys.Z) ||
+				keys.isJustDown(keys.ENTER) ||
+				keys.isJustDown(keys.SPACE) ||
+				gamepads.isJustDown(gamepads.A) ||
+				gamepads.isJustDown(gamepads.Y),
+
+			cancel:
+				keys.isJustDown(keys.X) ||
+				keys.isJustDown(keys.BACKSPACE) ||
+				keys.isJustDown(keys.ESCAPE) ||
+				gamepads.isJustDown(gamepads.B) ||
+				gamepads.isJustDown(gamepads.X)
+		};
+
+		var dir=[0,0];
+		if(inputs.up){
+			dir[1]-=1;
+		}if(inputs.down){
+			dir[1]+=1;
+		}
+
+		if(dir[1] > 0){
+			menu.next();
+		}else if(dir[1] < 0){
+			menu.prev();
+		}
+
+
+		if(inputs.select){
+			menu.select();
+		}
+		if(inputs.cancel){
+			menu.cancel();
+		}
 	}
 
 	menu.states={
@@ -381,6 +437,20 @@ function init(){
 			// initialize the new state
 			menu.states[menu.states.current].init();
 
+			// make sure there's at least one enabled option
+			menu.validOptions=false;
+			for(var i = 0; i < menu.options.length; ++i){
+				if(!menu.options[i].disabled){
+					menu.validOptions = true;
+					break;
+				}
+			}
+			menu.selectionBg.visible=menu.validOptions;
+			menu.selectionText.visible=menu.validOptions;
+			if(!menu.validOptions){
+				return;
+			}
+
 			// select the first menu item in the new state
 			menu.navReset();
 		}
@@ -427,224 +497,177 @@ function init(){
 	};
 
 function update(){
-	var inputs={
-		up:
-			keys.isJustDown(keys.UP) ||
-			keys.isJustDown(keys.W) ||
-			gamepads.isJustDown(gamepads.DPAD_UP) ||
-			gamepads.axisJustPast(gamepads.LSTICK_V,-0.5),
-
-		down:
-			keys.isJustDown(keys.DOWN) ||
-			keys.isJustDown(keys.S) ||
-			gamepads.isJustDown(gamepads.DPAD_DOWN) ||
-			gamepads.axisJustPast(gamepads.LSTICK_V,0.5),
-
-		select:
-			keys.isJustDown(keys.Z) ||
-			keys.isJustDown(keys.ENTER) ||
-			keys.isJustDown(keys.SPACE) ||
-			gamepads.isJustDown(gamepads.A) ||
-			gamepads.isJustDown(gamepads.Y),
-
-		cancel:
-			keys.isJustDown(keys.X) ||
-			keys.isJustDown(keys.BACKSPACE) ||
-			keys.isJustDown(keys.ESCAPE) ||
-			gamepads.isJustDown(gamepads.B) ||
-			gamepads.isJustDown(gamepads.X)
-	};
-
 	sprite_pointer.visible=game.state=="player_turn";
 
-	switch(game.state){
-		case "player_turn":
-			menu.update();
 
-			var dir=[0,0];
-			if(inputs.up){
-				dir[1]-=1;
-			}if(inputs.down){
-				dir[1]+=1;
-			}
+	if(!game.started){
+		menu.update();
+	}else{
+		switch(game.state){
+			case "player_turn":
+				menu.update();
+				break;
+			case "enemy_turn":
+				if(turn.timer <= 0){
+					turn.timer = 240;
+					if(turn.taken.length < turn.player_available.length+turn.enemy_available.length){
+						// add an enemy turn
+						var t={
+							sourceId:turn.enemy_available[turn.taken.length-turn.player_available.length]
+						};
+						t.source = enemy_party[t.sourceId];
 
-			if(dir[1] > 0){
-				menu.next();
-			}else if(dir[1] < 0){
-				menu.prev();
-			}
+						// pick a random action (has to be affordable)
+						do{
+							t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
+							t.action = t.source.actions[t.actionId];
+						}while(t.action.cost > t.source.stats.sp);
 
+						// pick a random target (has to be alive)
+						t.targetParty = t.action.friendly ? enemy_party : player_party;
+						do{
+							t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
+							t.target = t.targetParty[t.targetId];
+						}while(t.target.isDead());
 
-			if(inputs.select){
-				menu.select();
-			}
-			if(inputs.cancel){
-				menu.cancel();
-			}
-			break;
-		case "enemy_turn":
-			if(turn.timer <= 0){
-				turn.timer = 240;
-				if(turn.taken.length < turn.player_available.length+turn.enemy_available.length){
-					// add an enemy turn
-					var t={
-						sourceId:turn.enemy_available[turn.taken.length-turn.player_available.length]
-					};
-					t.source = enemy_party[t.sourceId];
+						t.source.spr.lerp.t.x-=8;
+						t.source.ui.setIcon(t.action.name);
 
-					// pick a random action (has to be affordable)
-					do{
-						t.actionId = clamp(0,Math.floor(Math.random()*t.source.actions.length),t.source.actions.length-1);
-						t.action = t.source.actions[t.actionId];
-					}while(t.action.cost > t.source.stats.sp);
+						turn.taken.push(t);
 
-					// pick a random target (has to be alive)
-					t.targetParty = t.action.friendly ? enemy_party : player_party;
-					do{
-						t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
-						t.target = t.targetParty[t.targetId];
-					}while(t.target.isDead());
+						sounds["sfx_select"].play();
+					}else{
+						// go to the next state
+						game.state="animation";
+						turn.timer=1000;
 
-					t.source.spr.lerp.t.x-=8;
-					t.source.ui.setIcon(t.action.name);
-
-					turn.taken.push(t);
-
-					sounds["sfx_select"].play();
+						// move back to slots before animations start
+						for(var i = 0; i < player_party.length; ++i){
+							player_party[i].spr.lerp.t.x = player_party[i].battleSlot.x;
+							player_party[i].spr.lerp.t.y = player_party[i].battleSlot.y;
+						}
+						for(var i = 0; i < enemy_party.length; ++i){
+							enemy_party[i].spr.lerp.t.x = enemy_party[i].battleSlot.x;
+							enemy_party[i].spr.lerp.t.y = enemy_party[i].battleSlot.y;
+						}
+					}
 				}else{
-					// go to the next state
-					game.state="animation";
+					turn.timer-=deltaTime;
+				}
+				break;
+			case "animation":
+				if(turn.taken.length == 0){
+					// if there are no moves left, finish turn
+					game.state="end";
+				}else if(turn.taken[0].done){
+					// prepare for next move
 					turn.timer=1000;
 
-					// move back to slots before animations start
-					for(var i = 0; i < player_party.length; ++i){
-						player_party[i].spr.lerp.t.x = player_party[i].battleSlot.x;
-						player_party[i].spr.lerp.t.y = player_party[i].battleSlot.y;
-					}
-					for(var i = 0; i < enemy_party.length; ++i){
-						enemy_party[i].spr.lerp.t.x = enemy_party[i].battleSlot.x;
-						enemy_party[i].spr.lerp.t.y = enemy_party[i].battleSlot.y;
-					}
-				}
-			}else{
-				turn.timer-=deltaTime;
-			}
-			break;
-		case "animation":
-			if(turn.taken[0].done){
-				// prepare for next move
-				turn.timer=1000;
+					var t = turn.taken[0];
+					// move back to slot
+					t.source.spr.lerp.t.x = t.source.battleSlot.x;
+					t.source.spr.lerp.t.y = t.source.battleSlot.y;
 
-				var t = turn.taken[0];
-				// move back to slot
-				t.source.spr.lerp.t.x = t.source.battleSlot.x;
-				t.source.spr.lerp.t.y = t.source.battleSlot.y;
-				
-				if(!t.source.isDead() && !t.target.isDead()){
-				}
+					turn.taken.shift(1);
+				}else{
+					turn.timer-=deltaTime;
+					var t = turn.taken[0];
 
-				turn.taken.shift(1);
-
-				// if there are no moves left, finish turn
-				if(turn.taken.length == 0){
-					game.state="end";
-				}
-			}else{
-				turn.timer-=deltaTime;
-				var t = turn.taken[0];
-
-				// if source or target is dead before the action starts, skip it
-				if(!t.started && (t.source.isDead() || t.target.isDead())){
-					t.done=true;
-					turn.timer=0;
-				}
-
-				if(!t.done){
-
-					// move to target
-					if(!t.started){
-						t.started=true;
-						t.source.spr.lerp.t.x = t.target.battleSlot.x + 16 * (t.action.friendly==t.source.enemy ? -1 : 1);
-						t.source.spr.lerp.t.y = t.target.battleSlot.y;
-
-						sounds["sfx_swoosh"].play();
-						t.swap=world.children[world.children.length-1];
-						world.swapChildren(t.source.spr,t.swap);
+					// if source or target is dead before the action starts, skip it
+					if(!t.started && (t.source.isDead() || t.target.isDead())){
+						t.done=true;
+						turn.timer=0;
 					}
 
-					// play animation + trigger action
-					if(!t.hit && Math.abs(t.source.spr.lerp.t.x - t.source.spr.position.x) < 1){
-						t.source.setAnimation("move_" + (t.action.friendly ? "friendly" : "enemy"));
-						sounds["sfx_" + (t.action.friendly ? "buff" : "pow")].play();
-						t.hit = true;
-						menu.descriptionTxt.text = t.action.trigger(t.source,t.target);
-					}else if(turn.timer <= 0){
-						// done action
-						t.done = true;
-						t.source.setAnimation("idle");
-						world.swapChildren(t.source.spr,t.swap);
+					if(!t.done){
+
+						// move to target
+						if(!t.started){
+							t.started=true;
+							t.source.spr.lerp.t.x = t.target.battleSlot.x + 16 * (t.action.friendly==t.source.enemy ? -1 : 1);
+							t.source.spr.lerp.t.y = t.target.battleSlot.y;
+
+							sounds["sfx_swoosh"].play();
+							t.swap=world.children[world.children.length-1];
+							world.swapChildren(t.source.spr,t.swap);
+						}
+
+						// play animation + trigger action
+						if(!t.hit && Math.abs(t.source.spr.lerp.t.x - t.source.spr.position.x) < 1){
+							t.source.setAnimation("move_" + (t.action.friendly ? "friendly" : "enemy"));
+							sounds["sfx_" + (t.action.friendly ? "buff" : "pow")].play();
+							t.hit = true;
+							menu.descriptionTxt.text = t.action.trigger(t.source,t.target);
+						}else if(turn.timer <= 0){
+							// done action
+							t.done = true;
+							t.source.setAnimation("idle");
+							world.swapChildren(t.source.spr,t.swap);
+						}
 					}
 				}
-			}
 
-			break;
-		case "end":
-			console.log("end");
-			for(var i = 0; i < player_party.length; ++i){
-				player_party[i].ui.setIcon(player_party[i].isDead() ? "skull" : null);
-				player_party[i].spr.lerp.t.x=player_party[i].battleSlot.x;
-				player_party[i].spr.lerp.t.y=player_party[i].battleSlot.y;
-			}
-			for(var i = 0; i < enemy_party.length; ++i){
-				enemy_party[i].ui.setIcon(enemy_party[i].isDead() ? "skull" : "unknown");
-				enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.x;
-				enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.y;
-			}
-
-			turn.taken=[]; // just resets
-
-			turn.player_available=[];
-			for(var i = 0; i < player_party.length; ++i){
-				if(!player_party[i].isDead()){
-					turn.player_available.push(i);
+				break;
+			case "end":
+				console.log("end");
+				for(var i = 0; i < player_party.length; ++i){
+					player_party[i].ui.setIcon(player_party[i].isDead() ? "skull" : null);
+					player_party[i].spr.lerp.t.x=player_party[i].battleSlot.x;
+					player_party[i].spr.lerp.t.y=player_party[i].battleSlot.y;
 				}
-			}
-			turn.enemy_available=[];
-			for(var i = 0; i < enemy_party.length; ++i){
-				if(!enemy_party[i].isDead()){
-					turn.enemy_available.push(i);
+				for(var i = 0; i < enemy_party.length; ++i){
+					enemy_party[i].ui.setIcon(enemy_party[i].isDead() ? "skull" : "unknown");
+					enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.x;
+					enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.y;
 				}
-			}
 
+				turn.taken=[]; // just resets
 
-			if(turn.player_available.length == 0){
-				// all players dead
-				screen_filter.uniforms.uBrightness-=0.01;
-				if(screen_filter.uniforms.uBrightness < -1){
-					// go to loss state
-					screen_filter.uniforms.uBrightness=0;
-					console.log("game over!");
+				turn.player_available=[];
+				for(var i = 0; i < player_party.length; ++i){
+					if(!player_party[i].isDead()){
+						turn.player_available.push(i);
+					}
 				}
-			}else if(turn.enemy_available.length == 0){
-				// all enemies dead
-			}else{
-				// continue battle
-				menu.states.set("select_party_member");
-				menu.sourceId=null;
-				menu.actionId=null;
+				turn.enemy_available=[];
+				for(var i = 0; i < enemy_party.length; ++i){
+					if(!enemy_party[i].isDead()){
+						turn.enemy_available.push(i);
+					}
+				}
 
-				game.state="player_turn";
-			}
-			break;
+
+				if(turn.player_available.length == 0){
+					// all players dead
+					screen_filter.uniforms.uBrightness-=0.01;
+					if(screen_filter.uniforms.uBrightness < -1){
+						// go to loss state
+						screen_filter.uniforms.uBrightness=0;
+						console.log("game over!");
+					}
+				}else if(turn.enemy_available.length == 0){
+					// all enemies dead
+				}else{
+					// continue battle
+					menu.states.set("select_party_member");
+					menu.sourceId=null;
+					menu.actionId=null;
+
+					game.state="player_turn";
+				}
+				break;
+		}
 	}
 
+	// pointer bounce
+	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
+
+	// update lerps
 	for(var i = 0; i < lerps.length; ++i){
 		lerps[i].spr.position.y = lerp(lerps[i].spr.position.y, lerps[i].t.y, lerps[i].by);
 		lerps[i].spr.position.x = lerp(lerps[i].spr.position.x, lerps[i].t.x, lerps[i].by);
 	}
-
-	sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 
 	// cycle palettes
 	//screen_filter.uniforms.uPalette = curTime/1000%15/15;
