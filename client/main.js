@@ -769,11 +769,13 @@ function update(){
 					player_party[i].ui.setIcon(player_party[i].isDead() ? "skull" : null);
 					player_party[i].spr.lerp.t.x=player_party[i].battleSlot.x;
 					player_party[i].spr.lerp.t.y=player_party[i].battleSlot.y;
+					player_party[i].cancelBuffs();
 				}
 				for(var i = 0; i < enemy_party.length; ++i){
 					enemy_party[i].ui.setIcon(enemy_party[i].isDead() ? "skull" : "unknown");
 					enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.x;
 					enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.y;
+					enemy_party[i].cancelBuffs();
 				}
 
 				turn.taken=[]; // just resets

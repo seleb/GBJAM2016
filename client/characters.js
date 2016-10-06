@@ -4,7 +4,9 @@ var action_attack={
 	friendly:false,
 	cost:0,
 	trigger:function(source,target){
-		var dmg = Math.max(1, source.stats.str-target.stats.def);
+		// damage target
+		// damage is source strength - target defense, with a minimum of 1 damage
+		var dmg = Math.max(1, source.getStat("str")-target.getStat("def"));
 		target.setHp(-dmg,true);
 		target.stagger();
 		return source.name + (target.isDead() ? " defeated " : " attacked ") + target.name + "\nhp : -"+dmg;
@@ -16,8 +18,11 @@ var action_defend={
 	friendly:true,
 	cost:-1,
 	trigger:function(source,target){
+		// temp buff target's defense by source's root defense 
+		var def=source.getStat("def",true);
+		target.buffStat("def", def);
 		source.setSp(-this.cost,true);
-		return source.name+" is defending "+target.name;
+		return source.name+" is defending "+target.name+"\ndef : +"+def;
 	}
 };
 
@@ -27,10 +32,10 @@ var character_templates={
 		name:"soldier",
 		sprite:"soldier",
 		stats:{
-			str:4,
-			int:5,
-			def:5,
-			hp_max:32
+			str:6,
+			int:1,
+			def:6,
+			hp_max:64
 		},
 		actions:[
 			action_attack,
@@ -41,7 +46,9 @@ var character_templates={
 				friendly:false,
 				cost:2,
 				trigger:function(source,target){
-					var dmg = Math.max(1, source.stats.str*2 - target.stats.def);
+					// damage target
+					// damage is 2 * source strength - target defense, with a minimum of 1 damage
+					var dmg = Math.max(1, source.getStat("str")*2 - target.getStat("def"));
 					source.setSp(-this.cost,true);
 					target.setHp(-dmg,true);
 					target.stagger();
@@ -54,9 +61,9 @@ var character_templates={
 		name:"punchy",
 		sprite:"punchy",
 		stats:{
-			str:4,
-			int:5,
-			def:5,
+			str:9,
+			int:3,
+			def:4,
 			hp_max:32
 		},
 		actions:[
@@ -68,11 +75,11 @@ var character_templates={
 				friendly:true,
 				cost:3,
 				trigger:function(source,target){
+					var heal=source.getStat("int");
 					source.setSp(-this.cost,true);
 					target.setSp(3);
-					source.stats.sp -= 3;
-					target.stats.hp += source.stats.int;
-					return source.name+" inspired "+target.name+"\nhp : +"+source.stats.int;
+					target.setHp(heal,true);
+					return source.name+" inspired "+target.name+"\nhp : +"+heal;
 				}
 			}
 		]
@@ -81,23 +88,54 @@ var character_templates={
 		name:"wizard",
 		sprite:"wizard",
 		stats:{
-			str:4,
-			int:5,
-			def:5,
+			str:2,
+			int:9,
+			def:2,
 			hp_max:32
 		},
 		actions:[
-			action_attack,
-			action_defend,
+			{
+				name:"fireball",
+				description:"attack for magic damage\ncosts 1 sp",
+				friendly:false,
+				cost:1,
+				trigger:function(source,target){
+					// damage target
+					// damage is source int - target int, with a minimum of 1 damage
+					var dmg=Math.max(1, source.getStat("int")-target.getStat("int"));
+					source.setSp(-this.cost,true);
+					target.setHp(-dmg,true);
+					target.stagger();
+					return source.name + (target.isDead() ? " defeated " : " fireballed ") + target.name + "\nhp : -"+dmg;
+				}
+			},
+			{
+				name:"drain",
+				description:"steal 1 sp from target",
+				friendly:false,
+				cost:0,
+				trigger:function(source,target){
+					var sp=target.getStat("sp");
+
+					if(sp > 0){
+						source.setSp(1,true);
+						target.setSp(-1,true);
+						return source.name+" drained 1 sp from "+target.name;
+					}else{
+						return source.name+" tried to drain sp, but "+target.name + " didn't have any";
+					}
+				}
+			},
 			{
 				name:"heal",
 				description:"partially restore target's hp\ncosts 1 sp",
 				friendly:true,
-				cost:1,
+				cost:2,
 				trigger:function(source,target){
+					var heal=source.getStat("int");
 					source.setSp(-this.cost,true);
-					target.stats.hp += source.stats.int;
-					return source.name+" healed "+target.name + "\nhp : +"+source.stats.int;
+					target.setHp(heal,true);
+					return source.name+" healed "+target.name + "\nhp : +"+heal;
 				}
 			}
 		]
@@ -108,9 +146,9 @@ var character_templates={
 		name:"blob",
 		sprite:"blob",
 		stats:{
-			str:15,
-			int:5,
-			def:5,
+			str:5,
+			int:0,
+			def:0,
 			hp_max:32
 		},
 		actions:[
@@ -120,9 +158,9 @@ var character_templates={
 		name:"skele",
 		sprite:"skele",
 		stats:{
-			str:15,
-			int:5,
-			def:5,
+			str:10,
+			int:1,
+			def:3,
 			hp_max:32
 		},
 		actions:[
@@ -216,6 +254,8 @@ var Character=function(_name, _enemy, _slot){
 		hp_max:this.template.stats.hp_max,
 		sp:3
 	};
+	this.cancelBuffs();
+
 	this.actions=this.template.actions.slice();
 
 	this.battleSlot={
@@ -298,4 +338,17 @@ Character.prototype.setAnimation=function(_animation){
 Character.prototype.stagger=function(){
 	this.spr.position.x += this.enemy ? 8 : -8;
 	world.position.x += this.enemy ? 2 : -2;
+};
+Character.prototype.getStat=function(_stat, _nonBuffed){
+	return (_nonBuffed ? this.stats : this.stats.temp)[_stat];
+};
+Character.prototype.buffStat=function(_stat, _value, _permanent){
+	this.stats.temp[_stat]+=_value;
+	if(_permanent){
+		this.stats[_stat] += _value;
+	}
+};
+Character.prototype.cancelBuffs=function(){
+	this.stats.temp = null;
+	this.stats.temp = JSON.parse(JSON.stringify(this.stats));
 };
