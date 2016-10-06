@@ -241,10 +241,10 @@ UI.prototype.setIcon=function(_icon){
 	}
 };
 UI.prototype.setHp=function(_percent){
-	this.hp.width=_percent <= 0 ? 0 : Math.max(1,_percent*13);
+	this.hp.width=Math.ceil(_percent <= 0 ? 0 : Math.max(1,_percent*13));
 };
 UI.prototype.setSp=function(_v){
-	this.sp.width=clamp(0,_v,3)/3*13;
+	this.sp.width=Math.ceil(clamp(0,_v,3)/3*13);
 };
 
 var Character=function(_name, _enemy, _slot){
