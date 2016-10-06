@@ -362,3 +362,9 @@ Character.prototype.cancelBuffs=function(){
 	this.stats.temp = null;
 	this.stats.temp = JSON.parse(JSON.stringify(this.stats));
 };
+Character.prototype.destroy=function(){
+	this.battleSlot.destroy();
+
+	lerps.splice(lerps.indexOf(this.spr.lerp),1);
+	lerps.splice(lerps.indexOf(this.battleSlot.lerp),1);
+}

@@ -419,6 +419,7 @@ function init(){
 					var t=turn.taken.pop();
 					menu.sourceId=t.sourceId;
 					menu.actionId=t.actionId;
+					menu.target_party=t.target_party;
 					menu.states.set("select_target");
 					menu.nav(t.targetId);
 				}else{
@@ -494,11 +495,15 @@ function init(){
 					sourceId:menu.sourceId,
 					actionId:menu.actionId,
 					targetId:menu.selected,
-					targetParty:menu.targetParty,
+					target_party:menu.target_party,
 					source:player_party[menu.sourceId],
 					action:player_party[menu.sourceId].actions[menu.actionId],
 					target:menu.target_party[menu.selected]
 				});
+
+				menu.sourceId=null;
+				menu.actionId=null;
+				menu.target_party=null;
 
 				if(turn.taken.length == turn.player_available.length){
 					// all player turns committed, go to enemy turn
@@ -512,8 +517,6 @@ function init(){
 				}else{
 					// start over
 					menu.states.set("select_party_member");
-					menu.sourceId=null;
-					menu.actionId=null;
 				}
 			},
 			cancel:function(){
@@ -521,6 +524,7 @@ function init(){
 				menu.states.set("select_action");
 				menu.nav(menu.actionId);
 				menu.actionId=null;
+				menu.target_party=null;
 				player_party[menu.sourceId].ui.setIcon(null);
 			}
 		},
@@ -592,20 +596,14 @@ function startGame(){
 		new Character("punchy",false,2),
 		new Character("wizard",false,3)
 	];
-	enemy_party=[
-		new Character("skele",true,1),
-		new Character("blob",true,2),
-		new Character("skele",true,3)
-	];
+	enemy_party=[];
 
 	// add characters
 	for(var i = 0; i < player_party.length; ++i){
 		world.addChild(player_party[i].battleSlot);
-		//world.addChild(player_party[i].ui.container);
 	}
 	for(var i = 0; i < enemy_party.length; ++i){
 		world.addChild(enemy_party[i].battleSlot);
-		//world.addChild(enemy_party[i].ui.container);
 	}
 
 	sprite_pointer=new PIXI.Container();
@@ -646,28 +644,38 @@ function update(){
 		// pointer bounce
 		sprite_pointer.actualSprite.position.y = Math.sin(curTime/100)*2;
 		switch(game.state){
-			case "moving_up":
-				world.lerp.t.x = -280;
+			case "moving_up":  // adds new enemies, moves the world up, then transitions the characters into view, then goes to start_turn
+				if(enemy_party.length == 0){
+					enemy_party=[
+						new Character("skele",true,1),
+						new Character("blob",true,2),
+						new Character("skele",true,3)
+					];
+					for(var i = 0; i < enemy_party.length; ++i){
+						world.addChild(enemy_party[i].battleSlot);
+					}
+					world.lerp.t.x -= 280;
+				}
 				if(Math.abs(world.lerp.t.x - world.position.x) < 1){
 					for(var i = 0; i < enemy_party.length; ++i){
-						enemy_party[i].battleSlot.lerp.t.x -= world.lerp.t.x;
-						enemy_party[i].battleSlot.position.x =enemy_party[i].battleSlot.lerp.t.x+160*(i+1);
+						enemy_party[i].battleSlot.lerp.t.x = -world.lerp.t.x;
+						enemy_party[i].battleSlot.position.x = enemy_party[i].battleSlot.lerp.t.x+280*(i+1);
 					}
 					for(var i = 0; i < player_party.length; ++i){
-						player_party[i].battleSlot.lerp.t.x -= world.lerp.t.x;
-						player_party[i].battleSlot.position.x = player_party[i].battleSlot.lerp.t.x-160*(i+1);
+						player_party[i].battleSlot.lerp.t.x = -world.lerp.t.x;
+						player_party[i].battleSlot.position.x = player_party[i].battleSlot.lerp.t.x-280*(i+1);
 					}
-					game.state="player_turn";
+					game.state="start_turn";
 				}
 				break;
-			case "player_turn":
+			case "player_turn":  // menu interaction while available, then goes to enemy_turn
 				if(turn.player_available.length > 0){
 					menu.update();
 				}else{
 					game.state="enemy_turn";
 				}
 				break;
-			case "enemy_turn":
+			case "enemy_turn":  // appends random enemy actions to turn, ten goes to animation
 				if(turn.timer <= 0){
 					turn.timer = 240;
 					if(turn.taken.length < turn.player_available.length+turn.enemy_available.length){
@@ -684,10 +692,10 @@ function update(){
 						}while(t.action.cost > t.source.stats.sp);
 
 						// pick a random target (has to be alive)
-						t.targetParty = t.action.friendly ? enemy_party : player_party;
+						t.target_party = t.action.friendly ? enemy_party : player_party;
 						do{
-							t.targetId = clamp(0,Math.floor(Math.random()*t.targetParty.length),t.targetParty.length-1);
-							t.target = t.targetParty[t.targetId];
+							t.targetId = clamp(0,Math.floor(Math.random()*t.target_party.length),t.target_party.length-1);
+							t.target = t.target_party[t.targetId];
 						}while(t.target.isDead());
 
 						t.source.spr.lerp.t.x-=8;
@@ -715,10 +723,10 @@ function update(){
 					turn.timer-=deltaTime;
 				}
 				break;
-			case "animation":
+			case "animation":  // processes turn, then goes to end_turn
 				if(turn.taken.length == 0){
 					// if there are no moves left, finish turn
-					game.state="end";
+					game.state="end_turn";
 				}else if(turn.taken[0].done){
 					// prepare for next move
 					turn.timer=1000;
@@ -768,23 +776,8 @@ function update(){
 				}
 
 				break;
-			case "end":
-				for(var i = 0; i < player_party.length; ++i){
-					player_party[i].ui.setIcon(player_party[i].isDead() ? "skull" : null);
-					player_party[i].spr.lerp.t.x=player_party[i].battleSlot.t.x;
-					player_party[i].spr.lerp.t.y=player_party[i].battleSlot.t.y;
-
-					player_party[i].cancelBuffs();
-				}
-				for(var i = 0; i < enemy_party.length; ++i){
-					enemy_party[i].ui.setIcon(enemy_party[i].isDead() ? "skull" : "unknown");
-					enemy_party[i].spr.lerp.t.x=enemy_party[i].battleSlot.t.x;
-					enemy_party[i].spr.lerp.t.y=enemy_party[i].battleSlot.t.y;
-
-					enemy_party[i].cancelBuffs();
-				}
-
-				turn.taken=[]; // just resets
+			case "start_turn":  // clears the old turn, puts characters back into their places, cancels buffs, resets icons, then goes to player_turn
+				turn.taken=[];
 
 				turn.player_available=[];
 				for(var i = 0; i < player_party.length; ++i){
@@ -799,8 +792,25 @@ function update(){
 					}
 				}
 
+				var characters = player_party.concat(enemy_party);
+				for(var i = 0; i < characters.length; ++i){
+					characters[i].ui.setIcon(characters[i].isDead() ? "skull" : (characters[i].enemy ? "unknown" : null));
+					characters[i].spr.lerp.t.x=characters[i].battleSlot.t.x;
+					characters[i].spr.lerp.t.y=characters[i].battleSlot.t.y;
 
-				if(turn.player_available.length == 0){
+					characters[i].cancelBuffs();
+				}
+
+				game.state="player_turn";
+				
+				menu.sourceId=null;
+				menu.actionId=null;
+				menu.target_party=null;
+				menu.states.set("select_party_member");
+				break;
+
+			case "end_turn":  // checks if the battle is over. if it is, goes to moving_up. otherwise, goes to start_turn
+				if(isBattleLost()){
 					// all players dead
 					screen_filter.targetBrightness=-1;
 					if(screen_filter.uniforms.uBrightness <= -1){
@@ -808,15 +818,23 @@ function update(){
 						screen_filter.targetBrightness=0;
 						console.log("game over!");
 					}
-				}else if(turn.enemy_available.length == 0){
+				}else if(isBattleWon()){
+
 					// all enemies dead
+					flash();
+					flash(); // ...shut up
+
+
+					// clear the dead enemies
+					for(var i = 0; i < enemy_party.length; ++i){
+						enemy_party[i].destroy();
+					}
+					enemy_party=[];
+
+					game.state="moving_up";
 				}else{
 					// continue battle
-					menu.states.set("select_party_member");
-					menu.sourceId=null;
-					menu.actionId=null;
-
-					game.state="player_turn";
+					game.state="start_turn";
 				}
 				break;
 		}
@@ -899,4 +917,21 @@ function toggleMute(){
 
 function flash(_dark){
 	screen_filter.uniforms.uBrightness+=0.25 * (_dark ? -1 : 1);
+}
+
+function isBattleWon(){
+	for(var i = 0; i < enemy_party.length; ++i){
+		if(!enemy_party[i].isDead()){
+			return false;
+		}
+	}
+	return true;
+}
+function isBattleLost(){
+	for(var i = 0; i < player_party.length; ++i){
+		if(!player_party[i].isDead()){
+			return false;
+		}
+	}
+	return true;
 }
