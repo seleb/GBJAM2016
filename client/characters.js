@@ -97,7 +97,7 @@ var character_templates={
 				trigger:function(source,target){
 					source.setSp(-this.cost,true);
 					target.stats.hp += source.stats.int;
-					return source.name+" healed "+target.name + "\nhp  : +"+source.stats.int;
+					return source.name+" healed "+target.name + "\nhp : +"+source.stats.int;
 				}
 			}
 		]
