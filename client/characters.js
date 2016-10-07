@@ -25,6 +25,22 @@ var action_defend={
 		return source.name+" is defending "+target.name+"\ndef : +"+def;
 	}
 };
+var action_fireball={
+	name:"fireball",
+	description:"attack for magic damage\ncosts 1 sp",
+	friendly:false,
+	cost:1,
+	trigger:function(source,target){
+		// damage target
+		// damage is source int - target int, with a minimum of 1 damage
+		var dmg=Math.max(1, source.getStat("int")-target.getStat("int"));
+		source.setSp(-this.cost,true);
+		target.setHp(-dmg,true);
+		target.stagger();
+		flash();
+		return source.name + (target.isDead() ? " defeated " : " fireballed ") + target.name + "\nhp : -"+dmg;
+	}
+};
 
 
 var character_templates={
@@ -96,22 +112,7 @@ var character_templates={
 			hp_max:32
 		},
 		actions:[
-			{
-				name:"fireball",
-				description:"attack for magic damage\ncosts 1 sp",
-				friendly:false,
-				cost:1,
-				trigger:function(source,target){
-					// damage target
-					// damage is source int - target int, with a minimum of 1 damage
-					var dmg=Math.max(1, source.getStat("int")-target.getStat("int"));
-					source.setSp(-this.cost,true);
-					target.setHp(-dmg,true);
-					target.stagger();
-					flash();
-					return source.name + (target.isDead() ? " defeated " : " fireballed ") + target.name + "\nhp : -"+dmg;
-				}
-			},
+			action_fireball,
 			{
 				name:"drain",
 				description:"steal 1 sp from target",
@@ -132,7 +133,7 @@ var character_templates={
 			},
 			{
 				name:"heal",
-				description:"partially restore target's hp\ncosts 1 sp",
+				description:"partially restore target's hp\ncosts 2 sp",
 				friendly:true,
 				cost:2,
 				trigger:function(source,target){
@@ -159,7 +160,77 @@ var character_templates={
 		actions:[
 			action_attack
 		]
-	},skele:{
+	},
+	blobqueen:{
+		name:"gwob",
+		sprite:"blobqueen",
+		stats:{
+			str:9,
+			int:5,
+			def:3,
+			hp_max:32
+		},
+		actions:[
+			action_attack,
+			{
+				name:"deplete",
+				description:"deplete target's sp\ncosts 1 sp",
+				friendly:false,
+				cost:1,
+				trigger:function(source,target){
+					// deplete target's sp
+					source.setSp(-this.cost,true);
+					target.setSp(0);
+					target.stagger();
+					flash(true);
+					return source.name + " depleted " + target.name + "'s sp";
+				}
+			},
+		]
+	},
+	blobwiz:{
+		name:"merlob",
+		sprite:"blobwiz",
+		stats:{
+			str:2,
+			int:11,
+			def:2,
+			hp_max:32
+		},
+		actions:[
+			action_fireball,
+			action_attack,
+			{
+				name:"heal",
+				description:"partially restore target's hp\ncosts 1 sp",
+				friendly:true,
+				cost:1,
+				trigger:function(source,target){
+					var heal=source.getStat("int");
+					source.setSp(-this.cost,true);
+					target.setHp(heal,true);
+					flash();
+					return source.name+" healed "+target.name + "\nhp : +"+heal;
+				}
+			}
+		]
+	},
+	blobchamp:{
+		name:"labelob",
+		sprite:"blobchamp",
+		stats:{
+			str:11,
+			int:0,
+			def:4,
+			hp_max:32
+		},
+		actions:[
+			action_attack
+		]
+	},
+
+
+	skele:{
 		name:"skele",
 		sprite:"skele",
 		stats:{

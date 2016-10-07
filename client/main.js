@@ -62,7 +62,8 @@ function init(){
 	enemy_parties=[
 		["blob"],
 		["blob","blob","blob"],
-		["skele","blob","skele"]
+		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
+		["skele","skele"]
 	];
 
 
