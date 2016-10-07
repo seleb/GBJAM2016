@@ -828,6 +828,13 @@ function update(){
 					flash();
 					flash(); // ...shut up
 
+					// player party recovers 25% hp and 1 sp as a reward
+					// (also recovers from death)
+					for(var i = 0; i < player_party.length; ++i){
+						player_party[i].setHp(player_party[i].stats.hp_max*0.25, true);
+						player_party[i].setSp(1, true);
+						player_party[i].setAnimation("idle");
+					}
 
 					// clear the dead enemies
 					for(var i = 0; i < enemy_party.length; ++i){
