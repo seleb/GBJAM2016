@@ -938,3 +938,9 @@ function isBattleLost(){
 	}
 	return true;
 }
+
+function bigCheats(){
+	for(var i = 0; i < enemy_party.length; ++i){
+		enemy_party[i].setHp(1);
+	}
+}
