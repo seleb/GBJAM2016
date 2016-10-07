@@ -758,8 +758,8 @@ function update(){
 					turn.timer-=deltaTime;
 					var t = turn.taken[0];
 
-					// if source or target is dead before the action starts, skip it
-					if(!t.started && (t.source.isDead() || t.target.isDead())){
+					// if source or target is dead or source can't afford action before the action starts, skip it
+					if(!t.started && (t.source.isDead() || t.target.isDead() || (t.source.stats.sp < t.action.cost) ) ){
 						t.done=true;
 						turn.timer=0;
 					}
