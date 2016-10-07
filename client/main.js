@@ -58,6 +58,14 @@ function init(){
 	swapPalette();
 
 
+	// enemy parties
+	enemy_parties=[
+		["blob"],
+		["blob","blob","blob"],
+		["skele","blob","skele"]
+	];
+
+
 	// screen background
 	bg = new PIXI.Container();
 	addLerp(bg,0.1);
@@ -650,15 +658,20 @@ function update(){
 		switch(game.state){
 			case "moving_up":  // adds new enemies, moves the world up, then transitions the characters into view, then goes to start_turn
 				if(enemy_party.length == 0){
-					enemy_party=[
-						new Character("skele",true,1),
-						new Character("blob",true,2),
-						new Character("skele",true,3)
-					];
-					for(var i = 0; i < enemy_party.length; ++i){
-						world.addChild(enemy_party[i].battleSlot);
+					if(enemy_parties.length == 0){
+						// final win state! game over!
+						console.log("win");
+					}else{
+						enemy_party=enemy_parties[0];
+						enemy_parties.shift();
+						for(var i = 0; i < enemy_party.length; ++i){
+							enemy_party[i] = new Character(enemy_party[i], true, (enemy_party.length == 1 ? 2 : i+1));
+						}
+						for(var i = 0; i < enemy_party.length; ++i){
+							world.addChild(enemy_party[i].battleSlot);
+						}
+						world.lerp.t.x -= 160;
 					}
-					world.lerp.t.x -= 160;
 				}
 				if(Math.abs(world.lerp.t.x - world.position.x) < 1){
 					for(var i = 0; i < enemy_party.length; ++i){
