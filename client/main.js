@@ -622,6 +622,9 @@ function startGame(){
 	sounds["music_battle"].play();
 	sounds["music_battle"].fadeIn(0.5,5000);
 	sounds["music_menu"].fadeOut(0,2000);
+
+	world.position.x-=96;
+	world.lerp.t.x-=96;
 }
 
 
@@ -654,7 +657,7 @@ function update(){
 					for(var i = 0; i < enemy_party.length; ++i){
 						world.addChild(enemy_party[i].battleSlot);
 					}
-					world.lerp.t.x -= 280;
+					world.lerp.t.x -= 160;
 				}
 				if(Math.abs(world.lerp.t.x - world.position.x) < 1){
 					for(var i = 0; i < enemy_party.length; ++i){
@@ -802,7 +805,7 @@ function update(){
 				}
 
 				game.state="player_turn";
-				
+
 				menu.sourceId=null;
 				menu.actionId=null;
 				menu.target_party=null;
