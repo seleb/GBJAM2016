@@ -317,6 +317,7 @@ Character.prototype.setHp=function(v,by){
 	this.ui.setHp(this.stats.hp/this.stats.hp_max);
 	if(this.isDead()){
 		this.setAnimation("dead");
+		this.setSp(0);
 	}
 	return this.stats.hp;
 };
