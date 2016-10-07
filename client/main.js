@@ -63,6 +63,7 @@ function init(){
 	addLerp(bg,0.1);
 	bg.cacheAsBitmap=true;
 	world.addChild(bg);
+	world.swapSlot = new PIXI.Container();
 
 
 	var tiles=PIXI.loader.resources.tilemap.data;
@@ -759,8 +760,8 @@ function update(){
 							t.source.spr.lerp.t.y = t.target.battleSlot.t.y;
 
 							sounds["sfx_swoosh"].play();
-							t.swap=world.children[world.children.length-1];
-							world.swapChildren(t.source.battleSlot,t.swap);
+							world.addChildAt(world.swapSlot,world.children.length-1);
+							world.swapChildren(t.source.battleSlot, world.swapSlot);
 						}
 
 						// play animation + trigger action
@@ -773,7 +774,7 @@ function update(){
 							// done action
 							t.done = true;
 							t.source.setAnimation("idle");
-							world.swapChildren(t.source.battleSlot,t.swap);
+							world.swapChildren(t.source.battleSlot, world.swapSlot);
 						}
 					}
 				}
