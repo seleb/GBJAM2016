@@ -88,11 +88,11 @@ var character_templates={
 			action_defend,
 			{
 				name:"inspire",
-				description:"restore target's sp and some hp\ncosts 3 sp",
+				description:"restore target's sp and some hp\ncosts 2 sp",
 				friendly:true,
-				cost:3,
+				cost:2,
 				trigger:function(source,target){
-					var heal=source.getStat("int");
+					var heal=Math.ceil(source.getStat("int") + target.getStat("hp_max")*0.1);
 					source.setSp(-this.cost,true);
 					target.setSp(3);
 					target.setHp(heal,true);
@@ -137,7 +137,7 @@ var character_templates={
 				friendly:true,
 				cost:2,
 				trigger:function(source,target){
-					var heal=source.getStat("int");
+					var heal=Math.ceil(source.getStat("int") + target.getStat("hp_max")*0.1);
 					source.setSp(-this.cost,true);
 					target.setHp(heal,true);
 					flash();
