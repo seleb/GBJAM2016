@@ -304,6 +304,65 @@ var character_templates={
 		actions:[
 			action_attack
 		]
+	},
+
+
+	win:{
+		name:"* \\o\/ *",
+		sprite:"win",
+		stats:{
+			str:0,
+			int:0,
+			def:9999,
+			hp_max:9999,
+			fast:false
+		},
+		actions:[
+			{
+				name:"heal",
+				description:"maxes out health every turn to keep player from progressing",
+				friendly:true,
+				cost:0,
+				trigger:function(source,target){
+					source.setHp(source.getStat("hp_max"),true);
+					flash();
+					return "the game's over, you really won!";
+				}
+			},
+			{
+				name:"heal",
+				description:"maxes out health every turn to keep player from progressing",
+				friendly:true,
+				cost:0,
+				trigger:function(source,target){
+					source.setHp(source.getStat("hp_max"),true);
+					flash();
+					return "this thing just heals itself every turn...";
+				}
+			},
+			{
+				name:"heal",
+				description:"maxes out health every turn to keep player from progressing",
+				friendly:true,
+				cost:0,
+				trigger:function(source,target){
+					source.setHp(source.getStat("hp_max"),true);
+					flash();
+					return "reward yourself : play more #gbjam games!";
+				}
+			},
+			{
+				name:"heal",
+				description:"maxes out health every turn to keep player from progressing",
+				friendly:true,
+				cost:0,
+				trigger:function(source,target){
+					source.setHp(source.getStat("hp_max"),true);
+					flash();
+					return "thanks for playing all the way through!";
+				}
+			}
+		]
 	}
 };
 

@@ -63,10 +63,13 @@ function init(){
 		["blob"],
 		["blob","blob","blob"],
 		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
+		
 		["skelesword"],
 		["skelesword","skeleaxe","skelesword"],
 		["skeleaxe","skelechamp","skelespear"],
-		["skelechamp","skelegiant","skelechamp"] // SKELE GIANT
+		["skelechamp","skelegiant","skelechamp"], // SKELE GIANT
+
+		["win"]
 	];
 
 
