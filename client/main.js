@@ -60,10 +60,13 @@ function init(){
 
 	// enemy parties
 	enemy_parties=[
+		["skelesword"],
+		["skelesword","skeleaxe","skelesword"],
+		["skeleaxe","skelechamp","skelespear"],
+		["skelechamp","blobqueen","skelechamp"],
 		["blob"],
 		["blob","blob","blob"],
-		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
-		["skele","skele"]
+		["blobwiz","blobqueen","blobchamp"] // THE BLOB COURT
 	];
 
 

@@ -234,17 +234,62 @@ var character_templates={
 	},
 
 
-	skele:{
+	skelesword:{
 		name:"skele",
 		sprite:"skele",
 		stats:{
-			str:10,
-			int:1,
-			def:3,
-			hp_max:32
+			str:9,
+			int:0,
+			def:1,
+			hp_max:16,
+			fast:true
 		},
 		actions:[
-			action_attack
+			action_attack,
+			action_defend
+		]
+	},skeleaxe:{
+		name:"skele",
+		sprite:"skeleaxe",
+		stats:{
+			str:10,
+			int:0,
+			def:1,
+			hp_max:16,
+			fast:true
+		},
+		actions:[
+			action_attack,
+			action_attack,
+			action_defend
+		]
+	},skelespear:{
+		name:"skele",
+		sprite:"skelespear",
+		stats:{
+			str:8,
+			int:0,
+			def:2,
+			hp_max:16,
+			fast:true
+		},
+		actions:[
+			action_attack,
+			action_defend
+		]
+	},skelechamp:{
+		sprite:"skelechamp",
+		stats:{
+			str:16,
+			int:0,
+			def:2,
+			hp_max:16,
+			fast:true
+		},
+		actions:[
+			action_attack,
+			action_attack,
+			action_defend
 		]
 	}
 };
