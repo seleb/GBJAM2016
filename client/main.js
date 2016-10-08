@@ -459,7 +459,7 @@ function init(){
 			},
 			update:function(){
 				sprite_pointer.lerp.t.x = player_party[menu.sourceId].spr.toGlobal(PIXI.zero).x;
-				sprite_pointer.lerp.t.y = player_party[menu.sourceId].spr.toGlobal(PIXI.zero).y-32;
+				sprite_pointer.lerp.t.y = player_party[menu.sourceId].spr.toGlobal(PIXI.zero).y-64;
 			},
 			nav:function(){
 				menu.descriptionTxt.text = player_party[menu.sourceId].actions[menu.selected].description;
