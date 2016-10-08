@@ -414,7 +414,7 @@ function init(){
 			},
 			update:function(){
 				sprite_pointer.lerp.t.x = player_party[menu.selected].spr.toGlobal(PIXI.zero).x;
-				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.toGlobal(PIXI.zero).y-48;
+				sprite_pointer.lerp.t.y = player_party[menu.selected].spr.toGlobal(PIXI.zero).y-80;
 			},
 			nav:function(){
 				menu.descriptionTxt.text="";
@@ -497,7 +497,7 @@ function init(){
 			},
 			update:function(){
 				sprite_pointer.lerp.t.x = menu.target_party[menu.selected].spr.toGlobal(PIXI.zero).x;
-				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.toGlobal(PIXI.zero).y-48;
+				sprite_pointer.lerp.t.y = menu.target_party[menu.selected].spr.toGlobal(PIXI.zero).y-80;
 			},
 			nav:function(){
 				menu.descriptionTxt.text = player_party[menu.sourceId].name+" :\n"+player_party[menu.sourceId].actions[menu.actionId].name + " " + menu.target_party[menu.selected].name;

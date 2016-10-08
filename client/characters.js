@@ -278,6 +278,7 @@ var character_templates={
 			action_defend
 		]
 	},skelechamp:{
+		name:"shade",
 		sprite:"skelechamp",
 		stats:{
 			str:16,
@@ -388,7 +389,7 @@ var Character=function(_name, _enemy, _slot){
 	this.battleSlot.id = _slot;
 	this.battleSlot.t={
 		x:16+16*(3-_slot),
-		y:33+8*_slot
+		y:64+8*_slot
 	};
 
 	this.enemy=_enemy;
@@ -412,6 +413,7 @@ var Character=function(_name, _enemy, _slot){
 		this.animations[i].animationSpeed= 1/40*this.animations[i].totalFrames;
 		this.spr.addChild(this.animations[i]);
 		this.animations[i].anchor.x=0.5;
+		this.animations[i].anchor.y=1;
 	}
 	this.animations.move_enemy.animationSpeed*=2;
 
@@ -422,7 +424,7 @@ var Character=function(_name, _enemy, _slot){
 	
 	var ui=new UI();
 	ui.container.position.x=this.battleSlot.t.x;
-	ui.container.position.y=this.battleSlot.t.y-16;
+	ui.container.position.y=this.battleSlot.t.y-48;
 	this.ui=ui;
 	this.battleSlot.addChild(this.spr);
 	this.battleSlot.addChild(this.ui.container);
