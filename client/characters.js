@@ -281,7 +281,7 @@ var character_templates={
 		name:"shade",
 		sprite:"skelechamp",
 		stats:{
-			str:16,
+			str:12,
 			int:0,
 			def:2,
 			hp_max:16,
@@ -289,8 +289,20 @@ var character_templates={
 		},
 		actions:[
 			action_attack,
-			action_attack,
 			action_defend
+		]
+	},skelegiant:{
+		name:"skele g .",
+		sprite:"skelegiant",
+		stats:{
+			str:14,
+			int:0,
+			def:4,
+			hp_max:32,
+			fast:false
+		},
+		actions:[
+			action_attack
 		]
 	}
 };

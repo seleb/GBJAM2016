@@ -83,7 +83,7 @@ $(document).ready(function(){
 	sounds["music_menu"].play();
 	sounds["music_menu"].fadeIn(1,1000);
 
-	//Howler.mute();
+	Howler.mute();
 
 	// create renderer
 	renderer = PIXI.autoDetectRenderer(
