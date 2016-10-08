@@ -155,7 +155,8 @@ var character_templates={
 			str:5,
 			int:0,
 			def:0,
-			hp_max:32
+			hp_max:32,
+			fast:false
 		},
 		actions:[
 			action_attack
@@ -168,7 +169,8 @@ var character_templates={
 			str:9,
 			int:5,
 			def:3,
-			hp_max:32
+			hp_max:32,
+			fast:false
 		},
 		actions:[
 			action_attack,
@@ -195,7 +197,8 @@ var character_templates={
 			str:2,
 			int:11,
 			def:2,
-			hp_max:32
+			hp_max:32,
+			fast:false
 		},
 		actions:[
 			action_fireball,
@@ -222,7 +225,8 @@ var character_templates={
 			str:11,
 			int:0,
 			def:4,
-			hp_max:32
+			hp_max:32,
+			fast:false
 		},
 		actions:[
 			action_attack
@@ -328,7 +332,8 @@ var Character=function(_name, _enemy, _slot){
 		def:this.template.stats.def,
 		hp:this.template.stats.hp_max,
 		hp_max:this.template.stats.hp_max,
-		sp:3
+		sp:3,
+		fast:this.template.stats.fast
 	};
 	this.cancelBuffs();
 

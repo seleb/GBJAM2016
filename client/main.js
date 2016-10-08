@@ -719,7 +719,11 @@ function update(){
 						t.source.spr.lerp.t.x-=8;
 						t.source.ui.setIcon(t.action.name);
 
-						turn.taken.push(t);
+						if(t.source.stats.fast){
+							turn.taken.unshift(t);
+						}else{
+							turn.taken.push(t);
+						}
 
 						sounds["sfx_select"].play();
 					}else{
@@ -754,7 +758,7 @@ function update(){
 					t.source.spr.lerp.t.x = t.source.battleSlot.t.x;
 					t.source.spr.lerp.t.y = t.source.battleSlot.t.y;
 
-					turn.taken.shift(1);
+					turn.taken.shift();
 				}else{
 					turn.timer-=deltaTime;
 					var t = turn.taken[0];
