@@ -69,6 +69,12 @@ function init(){
 		["skeleaxe","skelechamp","skelespear"],
 		["skelechamp","skelegiant","skelechamp"], // SKELE GIANT
 
+		["skelesword"],
+		["skelesword"],
+		["skelesword"],
+		["skelesword"],
+		["skelesword"], // ANOTHER THING
+
 		["win"]
 	];
 
