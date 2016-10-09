@@ -676,6 +676,8 @@ function update(){
 							screen_filter.targetBrightness=0;
 							menu.states.set("main_menu");
 							game.started=false;
+							sounds["music_battle"].fadeOut(0,1000);
+							sounds["music_menu"].fadeIn(0.5,2000);
 						}
 					}else{
 						enemy_party=enemy_parties[0].slice();
@@ -853,15 +855,19 @@ function update(){
 					screen_filter.targetBrightness=-1;
 					if(screen_filter.uniforms.uBrightness <= -1){
 						// go back to main menu
+						sounds["music_battle"].fadeOut(0,1000);
+						sounds["music_menu"].fadeIn(0.5,2000);
 						screen_filter.targetBrightness=0;
 						menu.states.set("main_menu");
 						game.started=false;
+						sounds["sfx_lose"].play();
 					}
 				}else if(isBattleWon()){
 
 					// all enemies dead
 					flash();
 					flash(); // ...shut up
+					sounds["sfx_win"].play();
 
 					// player party recovers 25% hp and 1 sp as a reward
 					// (also recovers from death)

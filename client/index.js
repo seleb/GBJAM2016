@@ -79,11 +79,23 @@ $(document).ready(function(){
 		loop:false,
 		volume:1
 	});
+	sounds["sfx_win"] = new Howl({
+		urls:["assets/audio/sfx_6.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
+	sounds["sfx_lose"] = new Howl({
+		urls:["assets/audio/sfx_7.wav"],
+		autoplay:false,
+		loop:false,
+		volume:1
+	});
 
 	sounds["music_menu"].play();
 	sounds["music_menu"].fadeIn(1,1000);
 
-	Howler.mute();
+	//Howler.mute();
 
 	// create renderer
 	renderer = PIXI.autoDetectRenderer(
