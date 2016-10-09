@@ -8,10 +8,10 @@
 	["skeleaxe", "skelechamp", "skelespear"],
 	["skelechamp", "skelegiant", "skelechamp"],
 
-	["skelesword"],
-	["skelesword"],
-	["skelesword"],
-	["skelesword"],
+	["wisp"],
+	["wisp", "skelechamp", "wisp"],
+	["skelespear","puppet","skelespear"],
+	["puppet","wisp","puppet"],
 	["skelesword"],
 
 	["win"]
