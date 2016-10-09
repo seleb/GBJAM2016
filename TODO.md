@@ -1,11 +1,7 @@
 TODO:
 
-- game over screen with reset option
-- do stuff when win condition is met (e.g. spawn more enemies, show a win screen)
-- balance combat (character stats, abilities)
-- come up with name + update title graphic
 - implement scalemode option (fit, 1x, 2x, 3x, etc, maybe fullscreen)
-- more enemies
-- advanced enemy AI (enemies call a function which creates an action based on characters' hp, sp, etc.)
+- final boss
+- advanced enemy AI? (enemies call a function which creates an action based on characters' hp, sp, etc.) (would need to re-balance rest of game...)
 - more audio?
 - rename punchy?
