@@ -402,15 +402,19 @@ var character_templates={
 			},
 			{
 				name:"patch",
-				description:"restores 1 sp to target",
+				description:"restores 1 sp and some hp to target",
 				friendly:true,
 				cost:0,
 				trigger:function(source,target){
+					var sp=1;
+					var hp=Math.ceil(target.stats.hp_max*0.05);
+
 					flash();
 					source.setSp(-this.cost,true);
-					target.setSp(1,true);
+					target.setSp(sp,true);
+					target.setHp(hp,true);
 
-					return source.name+" patched "+target.name+"\nsp : +1";
+					return source.name+" patched "+target.name+"\nsp : +"+sp+", hp : +"+hp;
 				}
 			}
 		]
