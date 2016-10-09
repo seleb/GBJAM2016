@@ -285,7 +285,7 @@ function init(){
 				}
 			},
 			update:function(){
-				menu.title_sprite.position.y=size[1]/3+Math.sin(curTime/1000)*3;
+				menu.title_sprite.position.y=size[1]*0.3+Math.sin(curTime/1000)*3;
 			},
 			nav:function(){
 				var s="";
@@ -340,7 +340,7 @@ function init(){
 				}
 			},
 			update:function(){
-				menu.title_sprite.position.y=size[1]/3+Math.sin(curTime/1000)*3;
+				menu.title_sprite.position.y=size[1]*0.3+Math.sin(curTime/1000)*3;
 			},
 			nav:function(){
 				var s="";
