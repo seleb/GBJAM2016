@@ -362,7 +362,7 @@ var character_templates={
 				name:"copy",
 				description:"replaces this action with a random action from target",
 				friendly:false,
-				cost:0,
+				cost:1,
 				trigger:function(source,target){
 					flash(true);
 					source.setSp(-this.cost,true);
@@ -383,7 +383,7 @@ var character_templates={
 				name:"copy",
 				description:"replaces this action with a random action from target",
 				friendly:false,
-				cost:0,
+				cost:1,
 				trigger:function(source,target){
 					flash(true);
 					source.setSp(-this.cost,true);
