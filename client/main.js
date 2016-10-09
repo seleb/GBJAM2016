@@ -58,27 +58,6 @@ function init(){
 	swapPalette();
 
 
-	// enemy parties
-	enemy_parties=[
-		["blob"],
-		["blob","blob"],
-		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
-
-		["skelesword"],
-		["skelesword","skeleaxe","skelesword"],
-		["skeleaxe","skelechamp","skelespear"],
-		["skelechamp","skelegiant","skelechamp"], // SKELE GIANT
-
-		["skelesword"],
-		["skelesword"],
-		["skelesword"],
-		["skelesword"],
-		["skelesword"], // ANOTHER THING
-
-		["win"]
-	];
-
-
 	// screen background
 	bg = new PIXI.Container();
 	addLerp(bg,0.1);
@@ -588,6 +567,17 @@ function init(){
     menu.container = new PIXI.Container();
     menu.container.position.y = size[1]-32;
 
+
+	sprite_pointer=new PIXI.Container();
+	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
+	sprite_pointer.actualSprite.anchor.x=0.5;
+	sprite_pointer.addChild(sprite_pointer.actualSprite);
+	sprite_pointer.position.x=0;
+	sprite_pointer.position.y=0;
+	sprite_pointer.visible=false;
+	addLerp(sprite_pointer,0.5);
+
+
     menu.container.addChild(menu.selectionBg);
     menu.container.addChild(menu.selectionText);
 	for(var i=0; i < menu.options.length; ++i){
@@ -595,10 +585,14 @@ function init(){
 	}
 	menu.container.addChild(menu.descriptionTxt);
 	menu.addChild(menu.container);
+	menu.addChild(sprite_pointer);
 
 	scene.addChild(world);
 	scene.addChild(menu);
 
+
+	player_party=[];
+	enemy_party=[];
 
 	// start the main loop
 	window.onresize = onResize;
@@ -611,6 +605,35 @@ function init(){
 
 
 function startGame(){
+	// clear out old parties in case this is a reset
+	for(var i = 0; i < player_party.length; ++i){
+		player_party[i].destroy();
+	}
+	for(var i = 0; i < enemy_party.length; ++i){
+		enemy_party[i].destroy();
+	}
+
+
+	// enemy parties
+	enemy_parties=[
+		["blob"],
+		["blob","blob"],
+		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
+
+		["skelesword"],
+		["skelesword","skeleaxe","skelesword"],
+		["skeleaxe","skelechamp","skelespear"],
+		["skelechamp","skelegiant","skelechamp"], // SKELE GIANT
+
+		["skelesword"],
+		["skelesword"],
+		["skelesword"],
+		["skelesword"],
+		["skelesword"], // ANOTHER THING
+
+		["win"]
+	];
+
 	game.started=true;
 
 	player_party=[
@@ -628,15 +651,6 @@ function startGame(){
 		world.addChild(enemy_party[i].battleSlot);
 	}
 
-	sprite_pointer=new PIXI.Container();
-	sprite_pointer.actualSprite=new PIXI.Sprite(PIXI.Texture.fromFrame("pointer.png"));
-	sprite_pointer.actualSprite.anchor.x=0.5;
-	sprite_pointer.addChild(sprite_pointer.actualSprite);
-	sprite_pointer.position.x=0;
-	sprite_pointer.position.y=0;
-	addLerp(sprite_pointer,0.5);
-	menu.addChild(sprite_pointer);
-
 	screen_filter.uniforms.uBrightness=1;
 
 	game.state="moving_up";
@@ -645,8 +659,8 @@ function startGame(){
 	sounds["music_battle"].fadeIn(0.5,5000);
 	sounds["music_menu"].fadeOut(0,2000);
 
-	world.position.x-=96;
-	world.lerp.t.x-=96;
+	world.position.x=-96;
+	world.lerp.t.x=-96;
 }
 
 
@@ -850,7 +864,8 @@ function update(){
 					if(screen_filter.uniforms.uBrightness <= -1){
 						// go to loss state
 						screen_filter.targetBrightness=0;
-						console.log("game over!");
+						menu.states.set("main_menu");
+						game.started=false;
 					}
 				}else if(isBattleWon()){
 
