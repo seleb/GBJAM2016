@@ -414,7 +414,7 @@ var character_templates={
 					target.setSp(sp,true);
 					target.setHp(hp,true);
 
-					return source.name+" patched "+target.name+"\nsp : +"+sp+", hp : +"+hp;
+					return source.name+" patched "+target.name+"\nsp : +"+sp+" , hp : +"+hp;
 				}
 			}
 		]
