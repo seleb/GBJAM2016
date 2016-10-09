@@ -347,6 +347,74 @@ var character_templates={
 			}
 		]
 	},
+	puppet:{
+		name:"puppet",
+		sprite:"puppet",
+		stats:{
+			str:16,
+			int:5,
+			def:5,
+			hp_max:32,
+			fast:false
+		},
+		actions:[
+			{
+				name:"copy",
+				description:"replaces this action with a random action from target",
+				friendly:false,
+				cost:0,
+				trigger:function(source,target){
+					flash(true);
+					source.setSp(-this.cost,true);
+
+					var actionId = 0;
+					var action=target.actions[actionId];
+					
+					for(var i = 0; i < source.actions.length; ++i){
+						if(source.actions[i] == this){
+							source.actions[i] = action;
+						}
+					}
+
+					return source.name+" copied "+action.name+" from "+target.name;
+				}
+			},
+			{
+				name:"copy",
+				description:"replaces this action with a random action from target",
+				friendly:false,
+				cost:0,
+				trigger:function(source,target){
+					flash(true);
+					source.setSp(-this.cost,true);
+
+					var actionId = 2;
+					var action=target.actions[actionId];
+					
+					for(var i = 0; i < source.actions.length; ++i){
+						if(source.actions[i] == this){
+							source.actions[i] = action;
+						}
+					}
+
+					return source.name+" copied "+action.name+" from "+target.name;
+				}
+			},
+			{
+				name:"patch",
+				description:"restores 1 sp to target",
+				friendly:true,
+				cost:0,
+				trigger:function(source,target){
+					flash();
+					source.setSp(-this.cost,true);
+					target.setSp(1,true);
+
+					return source.name+" patched "+target.name+"\nsp : +1";
+				}
+			}
+		]
+	},
 
 	win:{
 		name:"* \\o\/ *",
