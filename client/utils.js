@@ -69,5 +69,9 @@ function getFrames(_texture){
 		res.push(t);
 	}while(i<32);
 
+	if(res.length == 0){
+		res.push(PIXI.Texture.fromFrame("error.png"));
+	}
+
 	return res;
 }
