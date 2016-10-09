@@ -424,10 +424,28 @@ var UI=function(){
 		unknown:icon_unknown
 	};
 
+	this.hp.position.y=2;
+	this.hp.position.x=-10;
+	
+	this.sp.position.y=5;
+	this.sp.position.x=-10;
+	
+
+	this.hp.mask = new PIXI.Graphics();
+	this.sp.mask = new PIXI.Graphics();
+
+	this.hp.mask.position.y=2;
+	this.hp.mask.position.x=-10;
+	
+	this.sp.mask.position.y=5;
+	this.sp.mask.position.x=-10;
+
 	this.container.addChild(base2);
 	base2.addChild(this.sp);
+	base2.addChild(this.sp.mask);
 	this.container.addChild(base);
 	base.addChild(this.hp);
+	base.addChild(this.hp.mask);
 	this.container.addChild(icon_attack);
 	this.container.addChild(icon_defend);
 	this.container.addChild(icon_special);
@@ -436,12 +454,6 @@ var UI=function(){
 
 	
 
-	this.hp.position.y=2;
-	this.hp.position.x=-10;
-	
-	this.sp.position.y=5;
-	this.sp.position.x=-10;
-	
 
 	this.setHp(1);
 	this.setSp(3);
@@ -460,10 +472,16 @@ UI.prototype.setIcon=function(_icon){
 	}
 };
 UI.prototype.setHp=function(_percent){
-	this.hp.width=Math.ceil(_percent <= 0 ? 0 : Math.max(1,_percent*13));
+	this.hp.mask.clear();
+	this.hp.mask.beginFill();
+	this.hp.mask.drawRect(0,0,Math.ceil(clamp(0,_percent,1)*13),2);
+	this.hp.mask.endFill();
 };
 UI.prototype.setSp=function(_v){
-	this.sp.width=Math.ceil(clamp(0,_v,3)/3*13);
+	this.sp.mask.clear();
+	this.sp.mask.beginFill();
+	this.sp.mask.drawRect(0,0,Math.ceil(clamp(0,_v,3)/3*13),2);
+	this.sp.mask.endFill();
 };
 
 var Character=function(_name, _enemy, _slot){
