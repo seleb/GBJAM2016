@@ -28,13 +28,13 @@ $(document).ready(function(){
 	// setup game
 	startTime=Date.now();
 	sounds["music_menu"] = new Howl({
-		urls:["assets/audio/moody music.wav"],
+		urls:["assets/audio/menumusic.ogg"],
 		autoplay:false,
 		loop:true,
 		volume:0
 	});
 	sounds["music_battle"] = new Howl({
-		urls:["assets/audio/battlemusic.wav"],
+		urls:["assets/audio/battlemusic.ogg"],
 		autoplay:false,
 		loop:true,
 		volume:0
