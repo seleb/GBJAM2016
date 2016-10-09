@@ -61,9 +61,9 @@ function init(){
 	// enemy parties
 	enemy_parties=[
 		["blob"],
-		["blob","blob","blob"],
+		["blob","blob"],
 		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
-		
+
 		["skelesword"],
 		["skelesword","skeleaxe","skelesword"],
 		["skeleaxe","skelechamp","skelespear"],
@@ -609,8 +609,8 @@ function startGame(){
 
 	player_party=[
 		new Character("soldier",false,1),
-		new Character("punchy",false,2),
-		new Character("wizard",false,3)
+		new Character("wizard",false,2),
+		new Character("punchy",false,3)
 	];
 	enemy_party=[];
 
