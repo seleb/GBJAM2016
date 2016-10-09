@@ -115,17 +115,17 @@ var character_templates={
 			action_fireball,
 			{
 				name:"drain",
-				description:"steal 1 sp from target",
+				description:"steal sp from target",
 				friendly:false,
 				cost:0,
 				trigger:function(source,target){
-					var sp=target.getStat("sp");
+					var sp=target.stats.sp;
 
 					if(sp > 0){
-						source.setSp(1,true);
+						source.setSp(2,true);
 						target.setSp(-1,true);
 						flash(true);
-						return source.name+" drained 1 sp from "+target.name;
+						return source.name+" drained sp from "+target.name;
 					}else{
 						return source.name+" tried to drain sp, but "+target.name + " didn't have any";
 					}
