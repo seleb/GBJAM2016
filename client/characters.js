@@ -366,7 +366,7 @@ var character_templates={
 				cost:0,
 				trigger:function(source,target){
 					flash();
-					return ["the game's over, you really won!"];
+					return "the game's over, you really won!";
 				}
 			},
 			{
