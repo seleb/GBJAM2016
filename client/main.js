@@ -687,7 +687,13 @@ function update(){
 				if(enemy_party.length == 0){
 					if(enemy_parties.length == 0){
 						// final win state! game over!
-						console.log("win");
+						screen_filter.targetBrightness = -1;
+						if(screen_filter.uniforms.uBrightness <= -1){
+							// go back to main menu
+							screen_filter.targetBrightness=0;
+							menu.states.set("main_menu");
+							game.started=false;
+						}
 					}else{
 						enemy_party=enemy_parties[0];
 						enemy_parties.shift();
@@ -699,17 +705,18 @@ function update(){
 						}
 						world.lerp.t.x -= 160;
 					}
-				}
-				if(Math.abs(world.lerp.t.x - world.position.x) < 1){
-					for(var i = 0; i < enemy_party.length; ++i){
-						enemy_party[i].battleSlot.lerp.t.x = -world.lerp.t.x;
-						enemy_party[i].battleSlot.position.x = enemy_party[i].battleSlot.lerp.t.x+280*(i+1);
+				}else{
+					if(Math.abs(world.lerp.t.x - world.position.x) < 1){
+						for(var i = 0; i < enemy_party.length; ++i){
+							enemy_party[i].battleSlot.lerp.t.x = -world.lerp.t.x;
+							enemy_party[i].battleSlot.position.x = enemy_party[i].battleSlot.lerp.t.x+280*(i+1);
+						}
+						for(var i = 0; i < player_party.length; ++i){
+							player_party[i].battleSlot.lerp.t.x = -world.lerp.t.x;
+							player_party[i].battleSlot.position.x = player_party[i].battleSlot.lerp.t.x-280*(i+1);
+						}
+						game.state="start_turn";
 					}
-					for(var i = 0; i < player_party.length; ++i){
-						player_party[i].battleSlot.lerp.t.x = -world.lerp.t.x;
-						player_party[i].battleSlot.position.x = player_party[i].battleSlot.lerp.t.x-280*(i+1);
-					}
-					game.state="start_turn";
 				}
 				break;
 			case "player_turn":  // menu interaction while available, then goes to enemy_turn
@@ -862,7 +869,7 @@ function update(){
 					// all players dead
 					screen_filter.targetBrightness=-1;
 					if(screen_filter.uniforms.uBrightness <= -1){
-						// go to loss state
+						// go back to main menu
 						screen_filter.targetBrightness=0;
 						menu.states.set("main_menu");
 						game.started=false;
