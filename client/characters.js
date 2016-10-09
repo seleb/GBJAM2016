@@ -307,6 +307,47 @@ var character_templates={
 	},
 
 
+	wisp:{
+		name:"wisp",
+		sprite:"wisp",
+		stats:{
+			str:0,
+			int:14,
+			def:0,
+			hp_max:32,
+			fast:true
+		},
+		actions:[
+			{
+				name:"weaken",
+				description:"reduces target str and int",
+				friendly:false,
+				cost:0,
+				trigger:function(source,target){
+					flash(true);
+					source.setSp(-this.cost,true);
+					target.buffStat("str",-target.getStat("str"));
+					target.buffStat("int",-target.getStat("int"));
+					return source.name+" weakened "+target.name+"\nstr : "+target.getStat("str")+", int : "+target.getStat("int");
+				}
+			},
+			{
+				name:"absorb",
+				description:"steals target life",
+				friendly:false,
+				cost:1,
+				trigger:function(source,target){
+					var hp=Math.max(1, Math.min(target.stats.hp, source.getStat("int")-target.getStat("int")));
+					flash(true);
+					source.setSp(-this.cost,true);
+					target.setHp(-hp,true);
+					source.setHp(hp,true);
+					return source.name+" absorbed "+hp+" hp from "+target.name;
+				}
+			}
+		]
+	},
+
 	win:{
 		name:"* \\o\/ *",
 		sprite:"win",
