@@ -1,0 +1,18 @@
+[
+	["blob"],
+	["blob", "blob"],
+	["blobwiz", "blobqueen", "blobchamp"],
+
+	["skelesword"],
+	["skelesword", "skeleaxe", "skelesword"],
+	["skeleaxe", "skelechamp", "skelespear"],
+	["skelechamp", "skelegiant", "skelechamp"],
+
+	["skelesword"],
+	["skelesword"],
+	["skelesword"],
+	["skelesword"],
+	["skelesword"],
+
+	["win"]
+]

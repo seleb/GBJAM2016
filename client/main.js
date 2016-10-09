@@ -615,24 +615,7 @@ function startGame(){
 
 
 	// enemy parties
-	enemy_parties=[
-		["blob"],
-		["blob","blob"],
-		["blobwiz","blobqueen","blobchamp"], // THE BLOB COURT
-
-		["skelesword"],
-		["skelesword","skeleaxe","skelesword"],
-		["skeleaxe","skelechamp","skelespear"],
-		["skelechamp","skelegiant","skelechamp"], // SKELE GIANT
-
-		["skelesword"],
-		["skelesword"],
-		["skelesword"],
-		["skelesword"],
-		["skelesword"], // ANOTHER THING
-
-		["win"]
-	];
+	enemy_parties=PIXI.loader.resources.enemies.data.slice();
 
 	game.started=true;
 
@@ -695,7 +678,7 @@ function update(){
 							game.started=false;
 						}
 					}else{
-						enemy_party=enemy_parties[0];
+						enemy_party=enemy_parties[0].slice();
 						enemy_parties.shift();
 						for(var i = 0; i < enemy_party.length; ++i){
 							enemy_party[i] = new Character(enemy_party[i], true, (enemy_party.length == 1 ? 2 : i+1));

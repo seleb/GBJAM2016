@@ -123,6 +123,7 @@ $(document).ready(function(){
 	PIXI.loader
 		.add("screen_shader","assets/screen_shader.frag")
 		.add("spritesheet","assets/textures.json")
+		.add("enemies","assets/enemies.json")
 		.add("tilemap","assets/tilemap.json")
 		.add("font","assets/font/font.fnt")
 		.add("palette","assets/palette.png");
