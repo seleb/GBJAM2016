@@ -193,12 +193,12 @@ function _resize(){
 
 
 		while(aw <= w || ah <= h){
-			aw*=2;
-			ah*=2;
+			aw+=size[0];
+			ah+=size[1];
 		}
 
-		aw/=2;
-		ah/=2;
+		aw-=size[0];
+		ah-=size[1];
 	}else{
 		aw=w;
 		ah=h;
