@@ -13,7 +13,7 @@ html,body,#display{
 	right:0;
 	bottom:0;
 
-	background: none;
+	background:#af0477;
 
 	overflow:hidden;
 
@@ -32,6 +32,13 @@ canvas{
     image-rendering: optimize-contrast;
     image-rendering: pixelated;
     -ms-interpolation-mode: nearest-neighbor;
+
+	position:absolute;
+	margin:auto;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
 }
 
 #display{
