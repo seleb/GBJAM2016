@@ -42,6 +42,57 @@ var action_fireball={
 	}
 };
 
+var action_drain={
+	name:"drain",
+	description:"steal sp from target",
+	friendly:false,
+	cost:0,
+	trigger:function(source,target){
+		var sp=target.stats.sp;
+
+		if(sp > 0){
+			source.setSp(2,true);
+			target.setSp(-1,true);
+			flash(true);
+			return source.name+" drained sp from "+target.name;
+		}else{
+			return source.name+" tried to drain sp, but "+target.name + " didn't have any";
+		}
+	}
+};
+
+var action_weaken={
+	name:"weaken",
+	description:"reduces target str and int",
+	friendly:false,
+	cost:0,
+	trigger:function(source,target){
+		flash(true);
+		source.setSp(-this.cost,true);
+		target.buffStat("str",-target.getStat("str"));
+		target.buffStat("int",-target.getStat("int"));
+		return source.name+" weakened "+target.name+"\nstr : "+target.getStat("str")+", int : "+target.getStat("int");
+	}
+};
+
+var action_patch={
+	name:"patch",
+	description:"restores 1 sp and some hp to target",
+	friendly:true,
+	cost:0,
+	trigger:function(source,target){
+		var sp=1;
+		var hp=Math.ceil(target.stats.hp_max*0.05);
+
+		flash();
+		source.setSp(-this.cost,true);
+		target.setSp(sp,true);
+		target.setHp(hp,true);
+
+		return source.name+" patched "+target.name+"\nsp : +"+sp+" , hp : +"+hp;
+	}
+}
+
 
 var character_templates={
 	soldier:{
@@ -113,24 +164,7 @@ var character_templates={
 		},
 		actions:[
 			action_fireball,
-			{
-				name:"drain",
-				description:"steal sp from target",
-				friendly:false,
-				cost:0,
-				trigger:function(source,target){
-					var sp=target.stats.sp;
-
-					if(sp > 0){
-						source.setSp(2,true);
-						target.setSp(-1,true);
-						flash(true);
-						return source.name+" drained sp from "+target.name;
-					}else{
-						return source.name+" tried to drain sp, but "+target.name + " didn't have any";
-					}
-				}
-			},
+			action_drain,
 			{
 				name:"heal",
 				description:"partially restore target's hp\ncosts 2 sp",
@@ -318,19 +352,7 @@ var character_templates={
 			fast:true
 		},
 		actions:[
-			{
-				name:"weaken",
-				description:"reduces target str and int",
-				friendly:false,
-				cost:0,
-				trigger:function(source,target){
-					flash(true);
-					source.setSp(-this.cost,true);
-					target.buffStat("str",-target.getStat("str"));
-					target.buffStat("int",-target.getStat("int"));
-					return source.name+" weakened "+target.name+"\nstr : "+target.getStat("str")+", int : "+target.getStat("int");
-				}
-			},
+			action_weaken,
 			{
 				name:"absorb",
 				description:"steals target life",
@@ -400,23 +422,57 @@ var character_templates={
 					return source.name+" copied "+action.name+" from "+target.name;
 				}
 			},
+			action_patch
+		]
+	},
+	puppetmaster:{
+		name:"master",
+		sprite:"puppetmaster",
+		stats:{
+			str:15,
+			int:0,
+			def:0,
+			hp_max:64,
+			fast:true
+		},
+		actions:[
+			action_attack,
+			action_drain,
+			action_weaken,
 			{
-				name:"patch",
-				description:"restores 1 sp and some hp to target",
+				name:"rejuvenates",
+				description:"revives fallen puppetmasterhands",
 				friendly:true,
-				cost:0,
+				cost:2,
 				trigger:function(source,target){
-					var sp=1;
-					var hp=Math.ceil(target.stats.hp_max*0.05);
-
 					flash();
 					source.setSp(-this.cost,true);
-					target.setSp(sp,true);
-					target.setHp(hp,true);
 
-					return source.name+" patched "+target.name+"\nsp : +"+sp+" , hp : +"+hp;
+					for(var i = 0; i < enemy_party.length; ++i){
+						enemy_party[i].setHp(Math.ceil(enemy_party[i].stats.hp_max/3),true);
+						if(enemy_party[i].animations.dead.visible){
+							enemy_party[i].setAnimation("idle");
+						}
+					}
+
+					return source.name+" rejuvenated allies";
 				}
 			}
+		]
+	},
+	puppetmasterhand:{
+		name:"hand",
+		sprite:"puppetmasterhand",
+		stats:{
+			str:11,
+			int:0,
+			def:0,
+			hp_max:32,
+			fast:false
+		},
+		actions:[
+			action_attack,
+			action_patch
 		]
 	},
 
