@@ -17,6 +17,8 @@ var size=[160,144];
 
 var sounds=[];
 
+var pixelPerfect = true;
+
 $(document).ready(function(){
 
 	// try to auto-focus and make sure the game can be focused with a click if run from an iframe
@@ -94,8 +96,6 @@ $(document).ready(function(){
 
 	sounds["music_menu"].play();
 	sounds["music_menu"].fadeIn(1,1000);
-
-	//Howler.mute();
 
 	// create renderer
 	renderer = PIXI.autoDetectRenderer(
@@ -176,17 +176,38 @@ function _resize(){
 	var w=$("#display").innerWidth();
 	var h=$("#display").innerHeight();
 	var ratio=size[0]/size[1];
+
 	
 	if(w/h < ratio){
 		h = Math.round(w/ratio);
 	}else{
 		w = Math.round(h*ratio);
 	}
+	
 
-	renderer.view.style.width=w+"px";
-	renderer.view.style.height=h+"px";
+	var aw,ah;
 
-	console.log("Resized",size,w,h);
+	if(pixelPerfect){
+		aw=size[0];
+		ah=size[1];
+
+
+		while(aw <= w || ah <= h){
+			aw*=2;
+			ah*=2;
+		}
+
+		aw/=2;
+		ah/=2;
+	}else{
+		aw=w;
+		ah=h;
+	}
+
+	renderer.view.style.width=aw+"px";
+	renderer.view.style.height=ah+"px";
+
+	console.log("Resized",size,aw,ah);
 }
 
 PIXI.zero=new PIXI.Point(0,0);

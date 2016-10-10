@@ -352,7 +352,7 @@ function init(){
 						s="select to change palette\ncurrent: " + palettes[currentPalette];
 						break;
 					case 2:
-						s="not implemented yet";
+						s=pixelPerfect ? "pixel-perfect scale" : "scale to fit";
 						break;
 				}
 				menu.descriptionTxt.text=s;
@@ -369,6 +369,9 @@ function init(){
 						s="select to change palette\ncurrent: " + palettes[currentPalette];
 						break;
 					case 2:
+						pixelPerfect=!pixelPerfect;
+						s=pixelPerfect ? "pixel-perfect scale" : "scale to fit";
+						onResize();
 						break;
 				}
 				menu.descriptionTxt.text=s;
