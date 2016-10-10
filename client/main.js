@@ -295,7 +295,7 @@ function init(){
 						s="start a new game";
 						break;
 					case 1:
-						s="change stuff";
+						s="change sound, palette, and scale settings";
 						break;
 					case 2:
 						s="made by @seansleblanc for #gbjam 5\nwith pixi . js";
@@ -353,7 +353,8 @@ function init(){
 						s="select to change palette\ncurrent: " + palettes[currentPalette];
 						break;
 					case 2:
-						s=pixelPerfect ? "pixel-perfect scale" : "scale to fit";
+						s=["pixel-perfect (largest multiple of 160x144)","scale to fit","pixel-perfect (1 : 1)"];
+						s=s[scaleMode];
 						break;
 				}
 				menu.descriptionTxt.text=s;
@@ -370,8 +371,10 @@ function init(){
 						s="select to change palette\ncurrent: " + palettes[currentPalette];
 						break;
 					case 2:
-						pixelPerfect=!pixelPerfect;
-						s=pixelPerfect ? "pixel-perfect scale" : "scale to fit";
+						scaleMode+=1;
+						scaleMode%=3;
+						s=["pixel-perfect (largest multiple of 160x144)","scale to fit","pixel-perfect (1 : 1)"];
+						s=s[scaleMode];
 						onResize();
 						break;
 				}

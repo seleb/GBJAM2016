@@ -17,7 +17,7 @@ var size=[160,144];
 
 var sounds=[];
 
-var pixelPerfect = true;
+var scaleMode = 0;
 
 $(document).ready(function(){
 
@@ -187,7 +187,7 @@ function _resize(){
 
 	var aw,ah;
 
-	if(pixelPerfect){
+	if(scaleMode==0){
 		aw=size[0];
 		ah=size[1];
 
@@ -199,9 +199,12 @@ function _resize(){
 
 		aw-=size[0];
 		ah-=size[1];
-	}else{
+	}else if(scaleMode==1){
 		aw=w;
 		ah=h;
+	}else{
+		aw=size[0];
+		ah=size[1];
 	}
 
 	renderer.view.style.width=aw+"px";
